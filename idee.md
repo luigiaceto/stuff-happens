@@ -1,0 +1,13 @@
+Idea per implementare il match:
+
+idee per memorizzare la relazione match-situazioni:
+1) stringa in match del tipo "23V2,87L3" significa la situazione con id=23 è stata vinta nel round 2 e la situazione con id 87 è stata persa nel round 3. In tal caso è meglio per il client tenere una lista di situazioni (oggetto che contiene id, vittoria/sconfitta e round) che vengono vinte/perse durante la partita e alla fine (vittoria o sconfitta) il server si salva come stringa queste. In tal modo nel profilo utente dato il match posso risalire al nome della situazione tramite query e creare una lista di oggetti (nome, vinta/persa, round) da inviare al client per mostrarla. PARTITA CLIENT-SIDE -> vantaggio: nella tabella match non viene salvata la partita finchè non termina così evito di salvare match incompleti
+
+2) memorizzare man mano ad ogni guess del client in una tabella di supporto le carte che compaiono. PARTITA SERVER-SIDE
+
+`Inizio partia` POST del client sul server. Il client riceve 3 carte ognuna come (id, nome, misfortune_index, immagine).
+
+`n-esimo round` POST client clicca su *next card* e il server gli manda una carta casuale (id, nome, immagine) e ha 30s per collocare la carta appena vista tra due (o altrimenti all'inizio o fine) carte in mano. Allo scadere del timer viene viene inviata la richiesta al server che controlla se il posizionamento è corretto. In caso di successo viene inviata al client (id, nome, misfortune_index, immagine). Per generare la carta casuale si può includere nel body della richiesta la lista di carte viste fin'ora dal client da sottrarre a tutte le carte nel DB e poi prenderne una casuale da restituire al client. Inoltre c'è un campo opzionale che dice se la carta è stata posizionata bene o male.
+Per la scelta della posizione si può pensare che date n carte ho (n-1)+2 posizioni possibili dunque possso fare un semplice selettore che mi fa selezionale dalla posizione 1 a n+1. Nel server quindi posso ciclare sulla lista di carte e vedere in quella posizione è effettivamente ordinata bene.
+
+`fine match` avviene nella stessa POST dell'n-simo round quando il client ha indovinato la 6a carta oppure quando è la 3a carta che sbaglia. Nella risposta viene passato un campo opzionale che indica l'esito del match concluso. In caso di partita terminata quindi il server salva tutte le info di questa come entry "serializzando" le carte in una stringa da salvare nella tabella match.
