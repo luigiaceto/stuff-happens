@@ -10,22 +10,156 @@
 
 ## API Server
 
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
-  - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
+### __Starting a match__
+URL: `/api/matches/new`
+
+HTTP Method: POST
+
+Description: insert a new match into the DB
+
+Request body:
+```
+{
+  "user_id": 23
+}
+```
+
+Response: `201 Created` (success), `404 Not found` (wrong user id) or `503 Service Unavailable` (generic error). If the request body isn't valid, `422 Unprocessable Entity` (validation error).
+
+Response body: 
+```
+{
+  "match_id": 1234,
+  "situations": [
+    {
+      "id": 1
+      "name": "Turtle",
+      "misfortune_index": 34.6,
+      "img_path": "/img/turtle.jpg"
+    },
+    ...
+  ]
+}
+```
+
+### __Guess card position__
+URL: `/api/matches/:matchId/guess/new`
+
+HTTP Method: POST
+
+Description: make a guess for the card position. If the guess i correct the body contains its misfortune index, otherwise the response body will be empty.
+
+Request body:
+```
+{
+  "match_id": 1234,
+  "guessed_position": 2,
+  "match_situations": [
+    {
+      "id": 1
+      "name": "trovo numeri complessi allo scritto di analisi I",
+      "misfortune_index": 34.6,
+      "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
+    },
+    ...
+  ],
+  "guessed_situation_id": 1,
+  "round": 4
+}
+```
+
+Response: `201 Created` (success), `404 Not Found` (wrong match id), or `503 Service Unavailable` (generic error). If the request body isn't valid, `422 Unprocessable Entity` (validation error).
+
+Response body:
+```
+{
+  "misfortune_index": 34.7
+}
+```
+
+### __End the match__
+URL: `/api/matches/:matchId`
+
+HTTP Method: PATCH
+
+Description: conclude the match modifying the match entry in the DB.
+
+Request body:
+```
+{
+  "result": "win"/"lose"
+}
+```
+
+Response: `200 Ok` (success), `404 Not Found` (wrong match id), or `503 Service Unavailable` (generic error). If the request body isn't valid, `422 Unprocessable Entity` (validation error).
+
+Response body: None
+
+### __Get the match history for a user__
+URL: `/api/matches/:matchId`
+
+HTTP Method: GET
+
+Description: get the matches of a user with the informations about the situations involved in.
+
+Request boy: None
+
+Response: `200 Ok` (success), `404 Not found` (wrong user id).
+
+Response body:
+```
+[
+  {
+    "match_result": "win"/"lost",
+    "card_obtained": 4,
+    "match_situations": [
+      {
+        "id": 1
+        "name": "trovo numeri complessi allo scritto di analisi I",
+        "misfortune_index": 34.6,
+        "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg",
+        "round": 2,
+        "result": "won"/"lost"
+      },
+      ...
+    ]
+  },
+  ...
+]
+```
 
 ## Database Tables
 
-- Table `users` - contains xx yy zz
-- Table `something` - contains ww qq ss
-- ...
+| `Situation` |
+|-------------|
+| id (int) |
+| name (string) |
+| misfortune_index (real) |
+| img_path (string) |
+
+| `Match` |
+|---------|
+| id (int) |
+| user_id (int) |
+| result (string) |
+| collected_cards (int) |
+| date (string) |
+| terminated (string) |
+
+| `Situation_in_match` |
+|----------------------|
+| situation_id (int) |
+| match_id (int) |
+| round (string) |
+| result (string) |
+
+| `User` |
+|--------|
+| id (int) |
+| name (string) |
+| email (string) |
+| password (string) |
+| salt (string) |
 
 ## Main React Components
 
