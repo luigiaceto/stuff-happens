@@ -24,7 +24,7 @@ Request body:
 }
 ```
 
-Response: `201 Created` (success), `404 Not found` (wrong user id) or `503 Service Unavailable` (generic error). If the request body isn't valid, `422 Unprocessable Entity` (validation error).
+Response: `201 Created` (success), `503 Service Unavailable` (generic error). If the request body isn't valid, `422 Unprocessable Entity` (validation error).
 
 Response body: 
 ```
@@ -33,9 +33,9 @@ Response body:
   "situations": [
     {
       "id": 1
-      "name": "Turtle",
+      "name": "Trovo numeri complessi allo scritto di analisi I",
       "misfortune_index": 34.6,
-      "img_path": "/img/turtle.jpg"
+      "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
     },
     ...
   ]
@@ -47,7 +47,7 @@ URL: `/api/matches/:matchId/guess/new`
 
 HTTP Method: POST
 
-Description: make a guess for the card position. If the guess i correct the body contains its misfortune index, otherwise the response body will be empty.
+Description: make a guess for the card position. If the guess i correct the body contains its misfortune index, otherwise the response body will be empty. The position starts from 0 and goes up to N (actual cards in hand), e.g. if I wanna guess a card between the first and second card in my hand I should send 1. If I wanna gues the card as the first in hand I should send 0, and if I wanna guess the last card then I'll send N.
 
 Request body:
 ```
@@ -57,7 +57,7 @@ Request body:
   "match_situations": [
     {
       "id": 1
-      "name": "trovo numeri complessi allo scritto di analisi I",
+      "name": "Trovo numeri complessi allo scritto di analisi I",
       "misfortune_index": 34.6,
       "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
     },
@@ -73,21 +73,27 @@ Response: `201 Created` (success), `404 Not Found` (wrong match id), or `503 Ser
 Response body:
 ```
 {
-  "misfortune_index": 34.7
+  "id": 1
+  "name": "Trovo numeri complessi allo scritto di analisi I",
+  "misfortune_index": 34.6,
+  "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
 }
 ```
+
+Note: if the guess isn't correct, then the response body will be empty.
 
 ### __End the match__
 URL: `/api/matches/:matchId`
 
 HTTP Method: PATCH
 
-Description: conclude the match modifying the match entry in the DB.
+Description: conclude the match modifying the match entry in the DB. In case of anonimous user, send -1 in the "user_id" field.
 
 Request body:
 ```
 {
-  "result": "win"/"lose"
+  "result": "Win"/"Lose",
+  "user_id": 23
 }
 ```
 
@@ -104,14 +110,16 @@ Description: get the matches of a user with the informations about the situation
 
 Request boy: None
 
-Response: `200 Ok` (success), `404 Not found` (wrong user id).
+Response: `200 Ok` (success), `404 Not found` (wrong match id).
 
 Response body:
 ```
 [
   {
-    "match_result": "win"/"lost",
-    "card_obtained": 4,
+    "match_id": 1234,
+    "match_result": "Win"/"Lose",
+    "card_collected": 4,
+    "date": "2025-05-23",
     "match_situations": [
       {
         "id": 1
@@ -119,7 +127,7 @@ Response body:
         "misfortune_index": 34.6,
         "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg",
         "round": 2,
-        "result": "won"/"lost"
+        "result": "Won"/"Lost"
       },
       ...
     ]
@@ -142,7 +150,6 @@ Response body:
 | id (int) |
 | user_id (int) |
 | result (string) |
-| collected_cards (int) |
 | date (string) |
 | terminated (string) |
 

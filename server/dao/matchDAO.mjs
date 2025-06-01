@@ -1,14 +1,69 @@
 import db from "../db.mjs";
 import Match from "../models/Match.mjs";
 
-export const addMatch = (match) => {
+export const addMatch = (user_id) => {
   return new Promise((resolve, reject) => {
-    const sql = "INSERT INTO matches (user_id, result, collected_cards, terminated, date) VALUES (?, ?, ?, ?, ?)";
-    db.run(sql, [match.user_id, match.result, match.collected_cards, match.terminated, match.date], function(err) {
+    const sql = "INSERT INTO match (user_id, result, collected_cards, terminated, date) VALUES (?, ?, ?, ?, ?)";
+    db.run(sql, [user_id, null, 3, 'No', new Date().toISOString()], function(err) {
       if (err) {
         reject(err);
       } else {
-        resolve({ id: this.lastID });
+        resolve(this.lastID);
+      }
+    });
+  });
+}
+
+export const endMatch = (match_id, result) => {
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE match SET result = ?, terminated = 'Yes' WHERE id = ?";
+    db.run(sql, [result, match_id], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
+      }
+    });
+  });
+}
+
+export const addSituationInMatch = (situation_id, match_id, round, result) => {
+  return new Promise((resolve, reject) => {
+    const sql = "INSERT INTO situation_in_match (situation_id, match_id, round, result) VALUES (?, ?, ?, ?)";
+    db.run(sql, [situation_id, match_id, round, result], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
+      }
+    });
+  });
+}
+
+export const getMatchSituations = (matchId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * 
+      FROM situation_in_match 
+      JOIN situation ON situation.id = situation_in_match.situation_id 
+      WHERE match_id = ?
+    `;
+    db.all(sql, [matchId], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        const situationsInMatch = rows.map(
+          r => new Situation(
+            r.situation_id,
+            r.name,
+            r.misfortune_index,
+            r.img_path,
+            r.match_id,
+            r.round,
+            r.result
+          )
+        );
+        resolve(situationsInMatch);
       }
     });
   });
@@ -16,7 +71,7 @@ export const addMatch = (match) => {
 
 export const getUserMatches = (userId) => {
   return new Promise((resolve, reject) => {
-    const sql = "SELECT * FROM matches WHERE user_id = ?";
+    const sql = "SELECT * FROM match WHERE user_id = ? and terminated = 'Yes";
     db.all(sql, [userId], (err, rows) => {
       if (err) {
         reject(err);
@@ -32,6 +87,32 @@ export const getUserMatches = (userId) => {
           )
         );
         resolve(matches);
+      }
+    });
+  });
+}
+
+export const deleteMatch = (matchId) => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM match WHERE id = ?";
+    db.run(sql, [matchId], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
+      }
+    });
+  });
+}
+
+export const deleteMatchSituations = (matchId) => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM situation_in_match WHERE match_id = ?";
+    db.run(sql, [matchId], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
       }
     });
   });
