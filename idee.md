@@ -1,10 +1,20 @@
-Idea per implementare il match:
+# Flusso partita
+*Giocatore loggato*
+- manda al server richiesta di creazione match e riceve le 3 carte
+- si salva le carte nello stato
+- schiacchia un tasto e manda richiesta per prossima carta che gli manda il server
+- riceve la carta, cerca di indovinare la posizione e manda richiesta al server
+- riceve risposta se la carta è corretta o meno e se la salva nello stato
+- ...
+- all' n-esima guess il client capisce dalla risposta del server se ha vinto o meno e manda richiesta la server di chiudere la partita
 
-idee per memorizzare la relazione match-situazioni:
-1) stringa in match del tipo "23V2,87L3" significa la situazione con id=23 è stata vinta nel round 2 e la situazione con id 87 è stata persa nel round 3. In tal caso è meglio per il client tenere una lista di situazioni (oggetto che contiene id, vittoria/sconfitta e round) che vengono vinte/perse durante la partita e alla fine (vittoria o sconfitta) il server si salva come stringa queste. In tal modo nel profilo utente dato il match posso risalire al nome della situazione tramite query e creare una lista di oggetti (nome, vinta/persa, round) da inviare al client per mostrarla.
-vantaggio: nella tabella match non viene salvata la partita finchè non termina così evito di salvare match incompleti
-
-2) memorizzare nel DB in una tabella id_match-id_carta le info
+*Giocatore anonimo*
+- manda al server richiesta di creazione match e riceve le 3 carte
+- si salva le carte nello stato
+- schiacchia un tasto e manda richiesta per prossima carta che gli manda il server
+- riceve la carta, cerca di indovinare la posizione e manda richiesta al server
+- riceve risposta se la carta è corretta o meno e capisce se ha vinto o perso
+- manda richiesta al server per pulire le info nel DB che riguardano la partita demo appena conclusa
 
 `Inizio partia` POST del client sul server. Il client riceve 3 carte ognuna come (id, nome, misfortune_index, immagine).
 

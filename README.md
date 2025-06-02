@@ -15,7 +15,7 @@ URL: `/api/matches/new`
 
 HTTP Method: POST
 
-Description: insert a new match into the DB
+Description: insert a new match into the DB.
 
 Request body:
 ```
@@ -24,7 +24,7 @@ Request body:
 }
 ```
 
-Response: `201 Created` (success), `503 Service Unavailable` (generic error). If the request body isn't valid, `422 Unprocessable Entity` (validation error).
+Response: `201 Created` (success), `503 Service Unavailable` (generic error), `422 Unprocessable Entity` (validation error).
 
 Response body: 
 ```
@@ -42,12 +42,32 @@ Response body:
 }
 ```
 
+### __Get a new card to guess for the round__
+URL: `/api/matches/:matchId/situation`
+
+HTTP Method: GET
+
+Description: get a new card from the deck that the player will guess the position of.
+
+Request body: None
+
+Response: `200 Ok` (success), `404 Not found` (wrong match_id), `500 Internal Server Error` (generic error).
+
+Response body:
+```
+{
+  "id": 1
+  "name": "Trovo numeri complessi allo scritto di analisi I",
+  "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
+}
+```
+
 ### __Guess card position__
-URL: `/api/matches/:matchId/guess/new`
+URL: `/api/matches/:matchId/guess`
 
 HTTP Method: POST
 
-Description: make a guess for the card position. If the guess i correct the body contains its misfortune index, otherwise the response body will be empty. The position starts from 0 and goes up to N (actual cards in hand), e.g. if I wanna guess a card between the first and second card in my hand I should send 1. If I wanna gues the card as the first in hand I should send 0, and if I wanna guess the last card then I'll send N.
+Description: make a guess for the card position. If the guess i correct the body contains its misfortune index, otherwise the response body will be empty. The position starts from 0 and goes up to N (actual cards in hand), e.g. if I wanna guess a card between the first and second card in my hand I should send 1. If I wanna gues the card as the first in hand I should send 0, and if I wanna guess the last card then I'll send N. In case no position in chosen, send -1.
 
 Request body:
 ```
@@ -68,7 +88,7 @@ Request body:
 }
 ```
 
-Response: `201 Created` (success), `404 Not Found` (wrong match id), or `503 Service Unavailable` (generic error). If the request body isn't valid, `422 Unprocessable Entity` (validation error).
+Response: `201 Created` (success), `404 Not Found` (wrong match id), or `503 Service Unavailable` (generic error),`422 Unprocessable Entity` (validation error).
 
 Response body:
 ```
@@ -83,7 +103,7 @@ Response body:
 Note: if the guess isn't correct, then the response body will be empty.
 
 ### __End the match__
-URL: `/api/matches/:matchId`
+URL: `/api/matches/:matchId/end`
 
 HTTP Method: PATCH
 
@@ -97,12 +117,12 @@ Request body:
 }
 ```
 
-Response: `200 Ok` (success), `404 Not Found` (wrong match id), or `503 Service Unavailable` (generic error). If the request body isn't valid, `422 Unprocessable Entity` (validation error).
+Response: `200 Ok` (success), `404 Not Found` (wrong match id), or `503 Service Unavailable` (generic error), `422 Unprocessable Entity` (validation error).
 
 Response body: None
 
 ### __Get the match history for a user__
-URL: `/api/matches/:matchId`
+URL: `/api/users/:userId/matches`
 
 HTTP Method: GET
 
@@ -110,7 +130,7 @@ Description: get the matches of a user with the informations about the situation
 
 Request boy: None
 
-Response: `200 Ok` (success), `404 Not found` (wrong match id).
+Response: `200 Ok` (success), `500 Internal Server Error`.
 
 Response body:
 ```

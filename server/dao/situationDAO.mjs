@@ -1,5 +1,5 @@
 import db from "../db.mjs";
-import Situation from "../models/Situation.mjs";
+import { Situation } from "../models.mjs";
 
 export const addSituation = (situation) => {
   return new Promise((resolve, reject) => {
@@ -33,6 +33,34 @@ export const getAllSituations = () => {
     });
   });
 }
+
+export const getUnseenSituations = (match_id) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * 
+      FROM situation 
+      WHERE id NOT IN (
+        SELECT situation_id 
+        FROM situation_in_match 
+        WHERE match_id = ?
+      )
+    `;
+    db.all(sql, [match_id], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        const situations = rows.map(
+          r => new Situation(
+            r.id,
+            r.name,
+            r.misfortune_index,
+            r.img_path
+        ));
+        resolve(situations);
+      }
+    });
+  });
+} 
 
 export const getSituationById = (id) => {
   return new Promise((resolve, reject) => {

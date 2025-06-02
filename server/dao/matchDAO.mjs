@@ -1,14 +1,38 @@
+import dayjs from "dayjs";
 import db from "../db.mjs";
-import Match from "../models/Match.mjs";
+import { Match, Situation } from "../models.mjs";
 
 export const addMatch = (user_id) => {
   return new Promise((resolve, reject) => {
-    const sql = "INSERT INTO match (user_id, result, collected_cards, terminated, date) VALUES (?, ?, ?, ?, ?)";
-    db.run(sql, [user_id, null, 3, 'No', new Date().toISOString()], function(err) {
+    const sql = "INSERT INTO match (user_id, result, terminated, date) VALUES (?, ?, ?, ?)";
+    db.run(sql, [user_id, null, 'No', new Date().toISOString().split('T')[0]], function(err) {
       if (err) {
         reject(err);
       } else {
         resolve(this.lastID);
+      }
+    });
+  });
+}
+
+export const getMatch = (match_id) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM match WHERE id = ?";
+    db.get(sql, [match_id], (err, row) => {
+      if (err) {
+        reject(err);
+      } else if (row) {
+        const match = new Match(
+          row.id,
+          row.user_id,
+          row.result,
+          row.collected_cards,
+          row.terminated,
+          row.date
+        );
+        resolve(match);
+      } else {
+        resolve({error: "Match not found"});
       }
     });
   });
@@ -71,7 +95,7 @@ export const getMatchSituations = (matchId) => {
 
 export const getUserMatches = (userId) => {
   return new Promise((resolve, reject) => {
-    const sql = "SELECT * FROM match WHERE user_id = ? and terminated = 'Yes";
+    const sql = "SELECT * FROM match WHERE user_id = ? and terminated = 'Yes'";
     db.all(sql, [userId], (err, rows) => {
       if (err) {
         reject(err);

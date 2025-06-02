@@ -1,5 +1,12 @@
-// imports
-import express, { response } from 'express';
+// libraries imports
+import express from 'express';
+import morgan from 'morgan';
+import cors from 'cors';
+import { check, validationResult } from 'express-validator';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// local imports
 import * as MatchDAO from './dao/matchDAO.mjs';
 import * as SituationDAO from './dao/situationDAO.mjs';
 
@@ -25,11 +32,6 @@ function getRandomObjects(array, n) {
   return result;
 }
 
-function getRandomId(idList) {
-  const randomIndex = Math.floor(Math.random() * idList.length);
-  return idList[randomIndex];
-}
-
 //  A  B  C  D
 // 0 1  2  3  4
 function checkCardOrder(position, misfortune_index, hand) {
@@ -45,37 +47,83 @@ function checkCardOrder(position, misfortune_index, hand) {
 }
 
 /*** ROUTES ***/
-// POST /api/users/<id>/matches - Starting a match
-app.post('/api/matches/new', 
-  async (req, res) => {
+// POST /api/matches/new - Starting a match
+app.post('/api/matches/new', [
+    check('user_id').isInt()
+  ], async (req, res) => {
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      return res.status(422).json({errors: validationErrors.array()});
+    }
     const user_id = req.body.user_id;
     try {
       const match_id = await MatchDAO.addMatch(user_id);
-
       const situations = await SituationDAO.getAllSituations();
       const startingHand = getRandomObjects(situations, 3);
       
       await Promise.all(startingHand.map(situation => 
-        MatchDAO.addSituationInMatch(situation.id, match_id, 0, 'Starting Hand'))
+        MatchDAO.addSituationInMatch(situation.id, match_id, 'Starting hand', 'Won'))
       );
 
       const responseData = {
         match_id: match_id,
-        situations: startingHand
+        situations: startingHand.map(s => ({
+          id: s.id,
+          name: s.name,
+          misfortune_index: s.misfortune_index,
+          img_path: s.img_path
+        }))
       }
 
-      response.status(201).json(responseData);
+      res.status(201).json(responseData);
+    } catch (error) {
+      res.status(503).end();
+    }
+  }
+)
+
+// GET /api/matches/<matchId>/situation - Get a new situation for the match
+app.get('/api/matches/:matchId/situation',
+  async (req, res) => {
+    const match_id = parseInt(req.params.matchId);
+    const matchExistance = await MatchDAO.getMatch(match_id);
+    if (matchExistance.error) {
+      return res.status(404).json(matchExistance);
+    }
+    try {
+      const situations = await SituationDAO.getUnseenSituations(match_id);
+      const situation = getRandomObjects(situations, 1)[0];
+
+      const responseData = {
+        id: situation.id,
+        name: situation.name,
+        img_path: situation.img_path,
+      }
+
+      res.status(200).json(responseData);
     } catch (error) {
       res.status(500).end();
     }
   }
 )
 
-// POST /api/matches/<matchId>/guess/new - Guess card position
-app.post('/api/matches/:matchId/guess/new', 
-  async (req, res) => {
+// POST /api/matches/<matchId>/guess - Guess card position
+app.post('/api/matches/:matchId/guess', [
+    check('match_id').isInt(),
+    check('guessed_position').isInt(),
+    check('match_situations').isArray(),
+    check('guessed_situation_id').isInt(),
+    check('round').isString()
+  ], async (req, res) => {
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      return res.status(422).json({errors: validationErrors.array()});
+    }
     const match_id = parseInt(req.params.matchId);
-
+    const matchExistance = await MatchDAO.getMatch(match_id);
+    if (matchExistance.error) {
+      return res.status(404).json(matchExistance);
+    }
     try {
       const guessedSituation = await SituationDAO.getSituationById(req.body.guessed_situation_id);
       const guessedPosition = req.body.guessed_position;
@@ -83,9 +131,14 @@ app.post('/api/matches/:matchId/guess/new',
       const round = req.body.round;
 
       let responseData = {};
-      if (checkCardOrder(guessedPosition, guessedSituation.misfortune_index, hand)) {
+      if (guessedPosition >=0 && checkCardOrder(guessedPosition, guessedSituation.misfortune_index, hand)) {
         // card won
-        responseData = guessedSituation;
+        responseData = {
+          id: guessedSituation.id,
+          name: guessedSituation.name,
+          misfortune_index: guessedSituation.misfortune_index,
+          img_path: guessedSituation.img_path
+        };
         await MatchDAO.addSituationInMatch(guessedSituation.id, match_id, round, 'Won');
       } else {
         // card lost
@@ -94,32 +147,43 @@ app.post('/api/matches/:matchId/guess/new',
 
       res.status(201).json(responseData);
     } catch (error) {
-      res.status(500).end();
+      res.status(503).end();
     }
   }
 )
 
-// PATCH /api/matches/<matchId> - End the match
-app.patch('api/matches/:matchId', 
-  async (req, res) => {
+// PATCH /api/matches/<matchId>/end - End the match
+app.patch('/api/matches/:matchId/end', [
+    check('result').isString().isIn(['Win', 'Lose']),
+    check('user_id').isInt()
+  ], async (req, res) => {
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+      return res.status(422).json({errors: validationErrors.array()});
+    }
     const match_id = parseInt(req.params.matchId);
     const user_id = req.body.user_id;
-
+    const matchExistance = await MatchDAO.getMatch(match_id);
+    if (matchExistance.error) {
+      return res.status(404).json(matchExistance);
+    }
     try {
       // utente anonimo
       if (user_id < 0) {
         await MatchDAO.deleteMatch(match_id);
+        await MatchDAO.deleteMatchSituations(match_id);
       } else {
         await MatchDAO.endMatch(match_id, req.body.result);     
       }
+      res.status(200).json();
     } catch (error) {
-      res.status(500).end();
+      res.status(503).end();
     }
   }
 );
 
-// GET /api/matches/<matchId> - Get the match history for a user
-app.get('/api/matches/:userId', 
+// GET /api/users/<userId>/matches - Get the match history for a user
+app.get('/api/users/:userId/matches', 
   async (req, res) => {
     const userId = parseInt(req.params.userId);
 

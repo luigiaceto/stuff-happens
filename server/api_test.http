@@ -1,0 +1,54 @@
+POST http://localhost:3001/api/matches/new
+Content-Type: application/json
+
+{
+  "user_id": 1
+}
+
+###
+GET http://localhost:3001/api/matches/4/situation
+Content-Type: application/json
+
+###
+POST http://localhost:3001/api/matches/4/guess
+Content-Type: application/json
+
+{
+  "match_id": 4,
+  "guessed_position": 2,
+  "match_situations": [
+    {
+      "id": 2,
+      "name": "sit2",
+      "misfortune_index": 2,
+      "img_path": "img/sit2.png"
+    },
+    {
+      "id": 7,
+      "name": "sit7",
+      "misfortune_index": 7,
+      "img_path": "img/sit7.png"
+    },
+    {
+      "id": 4,
+      "name": "sit4",
+      "misfortune_index": 4,
+      "img_path": "img/sit4.png"
+    }
+  ],
+  "guessed_situation_id": 6,
+  "round": "2"
+}
+
+###
+PATCH http://localhost:3001/api/matches/4/end
+Content-Type: application/json
+
+{
+  "result": "Win",
+  "user_id": 1
+}
+
+###
+GET http://localhost:3001/api/users/1/matches
+Content-Type: application/json

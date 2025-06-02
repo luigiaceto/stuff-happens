@@ -19,4 +19,4 @@ function Situation(id, name, misfortune_index, img_path, match_id=null, round=nu
   this.result = result;
 }
 
-export { Match, Situation, SituationInMatch };
+export { Match, Situation };
