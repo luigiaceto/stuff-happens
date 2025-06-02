@@ -16,7 +16,71 @@ const port = 3001;
 app.use(express.json());
 app.use(morgan('dev'));
 
-/*** utils ***/
+/*
+// expose img folder 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use('/img', express.static(path.join(__dirname, '..', 'img')));
+
+// set up and enable CORS
+const corsOption = {
+    // il server accetta richieste solo da qui
+    origin: 'http://localhost:5173',
+    optionsSuccessStatus: 200,
+    // permette l'invio di cookies tra domini diversi e l'uso di 
+    // Authorization headers se presenti
+    credentials: true
+};
+// applica il middlewere CORS a tutte le routes del server
+app.use(cors(corsOption));
+
+// Set up Passport
+// - utilizzo della local strategy ceh sfrutta username e password
+// - verify è una callback di verifica chiamata con username e
+//   password presi dal body della richiesta
+passport.use(new LocalStrategy(async function verify(username, password, cb) {
+  // retrieve dell'user per vedere se esiste
+  const user = await getUser(username, password);
+  if(!user)
+    return cb(null, false, 'Incorrect username or password.');
+  // se l'utente è valido
+  return cb(null, user);
+}));
+
+// per salvare l'oggetto user nella sessione
+passport.serializeUser(function (user, cb) {
+  cb(null, user);
+});
+
+// quando una richiesta arriva con una sessione attiva, Passport 
+// richiama questa funzione per ricostruire req.user
+passport.deserializeUser(function (user, cb) { // this user is id + email + name
+  return cb(null, user);
+  // if needed, we can do extra check here (e.g., double check that the user is still in the database, etc.)
+});
+
+// middlewere di autenticazione da applicare poi a route
+// specifiche
+const isLoggedIn = (req, res, next) => {
+  if(req.isAuthenticated()) {
+    return next();
+  }
+  return res.status(401).json({error: 'Not authorized'});
+}
+
+// attiva le sessioni sul server
+app.use(session({
+  secret: "shhhhh... it's a secret!",
+  resave: false,
+  saveUninitialized: false,
+}));
+// middlewere che legge la sessione da express-session,
+// altrimenti Passport non ricorda l'utente tra una
+// richiesta e l'altra
+app.use(passport.authenticate('session'));
+*/
+
+/*** Utils ***/
 function getRandomObjects(array, n) {
   const arrayCopy = [...array];
   const result = [];
@@ -210,6 +274,43 @@ app.get('/api/users/:userId/matches',
     }
   }
 );
+
+/*
+// POST /api/sessions - Login of the user, returns the user data to the client
+app.post('/api/sessions', function(req, res, next) {
+  passport.authenticate('local', (err, user, info) => {
+    if (err)
+      return next(err);
+      if (!user) {
+        // display wrong login messages
+        return res.status(401).send(info);
+      }
+      // success, perform the login
+      req.login(user, (err) => {
+        if (err)
+          return next(err);
+        
+        // req.user contains the authenticated user, we send all the user info back
+        return res.status(201).json(req.user);
+      });
+  })(req, res, next);
+});
+
+// GET /api/sessions/current - Checks if there's an active session (the user is logged)
+app.get('/api/sessions/current', (req, res) => {
+  if(req.isAuthenticated()) {
+    res.json(req.user);}
+  else
+    res.status(401).json({error: 'Not authenticated'});
+});
+
+// DELETE /api/session/current - Logout of the user, deletes the session
+app.delete('/api/sessions/current', (req, res) => {
+  req.logout(() => {
+    res.end();
+  });
+});
+*/
 
 // activate the server
 app.listen(port, () => {

@@ -141,3 +141,31 @@ export const deleteMatchSituations = (matchId) => {
     });
   });
 }
+
+// cleans-up the match table
+export const clearMatches = () => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM match";
+    db.run(sql, [], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
+      }
+    });
+  });
+}
+
+// cleans-up the situation_in_match table
+export const clearSituationsInMatch = () => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM situation_in_match";
+    db.run(sql, [], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
+      }
+    });
+  });
+}

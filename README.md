@@ -202,5 +202,5 @@ Response body:
 
 ## Users Credentials
 
-- username, password (plus any other requested info)
-- username, password (plus any other requested info)
+- Luigi - luigi@gmail.com, pass: ciaociao
+- Stu - stu@gmail.com, pass: stustu

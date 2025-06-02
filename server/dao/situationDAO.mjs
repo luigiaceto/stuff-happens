@@ -82,3 +82,17 @@ export const getSituationById = (id) => {
     });
   });
 }
+
+// cleans-up the situation table
+export const clearSituations = () => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM situation";
+    db.run(sql, [], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
+      }
+    });
+  });
+}
