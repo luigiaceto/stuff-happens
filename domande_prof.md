@@ -1,4 +1,4 @@
-- nella route per iniziare la partita è sbagliato passare l'user_id nel body? E' sbagliato usare -1 o comunque null nel caso di utente non loggato?
+- nella route per iniziare la partita è sbagliato passare l'user_id nel body? E' sbagliato mandare body vuoto nel caso di utente non loggato?
 ->
 
 - va bene gestire la validazione del timer con timestamp nel DB? Introducono ritardo che complica la validazione? Occorre mettere tipo 1 o mezzo secondo in più per evitare problemi?
@@ -28,7 +28,7 @@
 - va bene che il server quando risponde a una guess possa anche concludere la partita e quindi mandare un campo "opzionale" che dica se la partita è stata vinta/persa? In quel caso va bene che la partita si concluda subito mostrando le carte vinte senza mostrare la notifica della guess scorretta/corretta? Invece per la partita demo viene vista solo la prima risposta e basta.
 ->
 
-- poi su questa route potrei controllare nella richiesta se esiste una sessione con dentro l'user ed in caso non esista posso cancellare le entry legate a quel match nel DB. Basta req.session o serve req.session.userId? Se si posso farla anche nella prima API così non ho bisogno di mandare nel body l'id dell'user?
+- poi su questa route potrei richiedere un campo anon_user che mi consente di pulire il DB nel caso di partite demo? O non è richiesta la pulizia?
 ->
 
 - va bene che le carte iniziali siano associate al round 0?
