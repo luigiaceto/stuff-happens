@@ -122,21 +122,31 @@ app.post('/api/matches/new', [
     const user_id = req.body.user_id;
     try {
       const match_id = await MatchDAO.addMatch(user_id);
-      const situations = await SituationDAO.getAllSituations();
-      const startingHand = getRandomObjects(situations, 3);
-      
+      const allSituations = await SituationDAO.getAllSituations();
+      const someSituations = getRandomObjects(allSituations, 4);
+      const startingHand = someSituations.slice(0, 3);
+      const tableSituation = someSituations[3];
+
       await Promise.all(startingHand.map(situation => 
         MatchDAO.addSituationInMatch(situation.id, match_id, 'Starting hand', 'Won'))
       );
 
+      // null poichè devo aspettare la risposta del client
+      await MatchDAO.addSituationInMatch(tableSituation.id, match_id, '1', null);
+
       const responseData = {
         match_id: match_id,
-        situations: startingHand.map(s => ({
+        starting_situations: startingHand.map(s => ({
           id: s.id,
           name: s.name,
           misfortune_index: s.misfortune_index,
           img_path: s.img_path
-        }))
+        })),
+        table_situation: {
+          id: tableSituation.id,
+          name: tableSituation.name,
+          img_path: tableSituation.img_path
+        }
       }
 
       res.status(201).json(responseData);
@@ -146,6 +156,7 @@ app.post('/api/matches/new', [
   }
 )
 
+// protetta, solo per utenti loggati
 // GET /api/matches/<matchId>/situation - Get a new situation for the match
 app.get('/api/matches/:matchId/situation',
   async (req, res) => {
@@ -157,6 +168,8 @@ app.get('/api/matches/:matchId/situation',
     try {
       const situations = await SituationDAO.getUnseenSituations(match_id);
       const situation = getRandomObjects(situations, 1)[0];
+      const round = 
+      await MatchDAO.addSituationInMatch(situation.id, match_id, )
 
       const responseData = {
         id: situation.id,

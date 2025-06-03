@@ -5,7 +5,7 @@ import { Match, Situation } from "../models.mjs";
 export const addMatch = (user_id) => {
   return new Promise((resolve, reject) => {
     const sql = "INSERT INTO match (user_id, result, terminated, date) VALUES (?, ?, ?, ?)";
-    db.run(sql, [user_id, null, 'No', new Date().toISOString().split('T')[0]], function(err) {
+    db.run(sql, [user_id, null, 'No', dayjs().format('YYYY-MM-DD')], function(err) {
       if (err) {
         reject(err);
       } else {
@@ -52,9 +52,12 @@ export const endMatch = (match_id, result) => {
 }
 
 export const addSituationInMatch = (situation_id, match_id, round, result) => {
+  // non mi serve il timestamp per le carte iniziali
+  const timestamp = round === 'Starting hand' ? null : dayjs().format('YYYY-MM-DD HH:mm:ss');
+
   return new Promise((resolve, reject) => {
-    const sql = "INSERT INTO situation_in_match (situation_id, match_id, round, result) VALUES (?, ?, ?, ?)";
-    db.run(sql, [situation_id, match_id, round, result], function(err) {
+    const sql = "INSERT INTO situation_in_match (situation_id, match_id, round, result, timestamp) VALUES (?, ?, ?, ?)";
+    db.run(sql, [situation_id, match_id, round, result, timestamp], function(err) {
       if (err) {
         reject(err);
       } else {

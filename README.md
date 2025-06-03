@@ -30,15 +30,20 @@ Response body:
 ```
 {
   "match_id": 1234,
-  "situations": [
+  "starting_situations": [
     {
       "id": 1
-      "name": "Trovo numeri complessi allo scritto di analisi I",
+      "name": "Dimentichi il caricabatterie del telefono in hotel",
       "misfortune_index": 34.6,
-      "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
+      "img_path": "/img/sit1.jpg"
     },
     ...
-  ]
+  ],
+  "table_situation": {
+    "id": 2,
+    "name": "Il wifi dell'hotel è lentissimo",
+    "img_path": "/img/sit2.jpg"
+  }
 }
 ```
 
