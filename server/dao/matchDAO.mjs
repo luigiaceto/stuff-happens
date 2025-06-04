@@ -4,8 +4,8 @@ import { Match, Situation } from "../models.mjs";
 
 export const addMatch = (user_id) => {
   return new Promise((resolve, reject) => {
-    const sql = "INSERT INTO match (user_id, result, terminated, date) VALUES (?, ?, ?, ?)";
-    db.run(sql, [user_id, null, 'No', dayjs().format('YYYY-MM-DD')], function(err) {
+    const sql = "INSERT INTO match (user_id, result, round, terminated, date) VALUES (?, ?, ?, ?, ?)";
+    db.run(sql, [user_id, null, 0, 'No', dayjs().format('YYYY-MM-DD')], function(err) {
       if (err) {
         reject(err);
       } else {
@@ -38,6 +38,96 @@ export const getMatch = (match_id) => {
   });
 }
 
+export const incrementAndGetRound = (match_id) => {
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE match SET round = round + 1 WHERE id = ? RETURNING round";
+    db.get(sql, [match_id], (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row.round);
+      }
+    });
+  });
+}
+
+export const getGuessStartingTime = (match_id) => {
+  // cerco il timestamp dell'ultima situazione inserita nella partita
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT timestamp, situation_id FROM situation_in_match WHERE match_id = ? AND result IS NULL";
+    db.get(sql, [match_id], (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({situation_id: row.situation_id, timestamp: row.timestamp});
+      }
+    });
+  });
+}
+
+export const addSituationInMatch = (situation_id, match_id, round, result) => {
+  // non mi serve il timestamp per le carte iniziali
+  const timestamp = round === 0 ? null : dayjs().format('YYYY-MM-DD HH:mm:ss');
+
+  return new Promise((resolve, reject) => {
+    const sql = "INSERT INTO situation_in_match (situation_id, match_id, round, result, timestamp) VALUES (?, ?, ?, ?, ?)";
+    db.run(sql, [situation_id, match_id, round, result, timestamp], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
+      }
+    });
+  });
+}
+
+export const updateSituationInMatch = (situation_id, match_id, result) => {
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE situation_in_match SET result = ? WHERE situation_id = ? AND match_id = ?";
+    db.run(sql, [result, situation_id, match_id], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
+      }
+    });
+  });
+}
+
+export const getWonSituations = (matchId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT COUNT(*) as count
+      FROM situation_in_match 
+      WHERE match_id = ? AND result = 'Won'
+    `;
+    db.get(sql, [matchId], (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row.count);
+      }
+    });
+  });
+}
+
+export const getLostSituations = (matchId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT COUNT(*) as count
+      FROM situation_in_match 
+      WHERE match_id = ? AND result = 'Lost'
+    `;
+    db.get(sql, [matchId], (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row.count);
+      }
+    });
+  });
+}
+
 export const endMatch = (match_id, result) => {
   return new Promise((resolve, reject) => {
     const sql = "UPDATE match SET result = ?, terminated = 'Yes' WHERE id = ?";
@@ -51,17 +141,24 @@ export const endMatch = (match_id, result) => {
   });
 }
 
-export const addSituationInMatch = (situation_id, match_id, round, result) => {
-  // non mi serve il timestamp per le carte iniziali
-  const timestamp = round === 'Starting hand' ? null : dayjs().format('YYYY-MM-DD HH:mm:ss');
-
+export const getUserMatches = (userId) => {
   return new Promise((resolve, reject) => {
-    const sql = "INSERT INTO situation_in_match (situation_id, match_id, round, result, timestamp) VALUES (?, ?, ?, ?)";
-    db.run(sql, [situation_id, match_id, round, result, timestamp], function(err) {
+    const sql = "SELECT * FROM match WHERE user_id = ? and terminated = 'Yes'";
+    db.all(sql, [userId], (err, rows) => {
       if (err) {
         reject(err);
       } else {
-        resolve("ok");
+        const matches = rows.map(
+          r => new Match(
+            r.id,
+            r.user_id,
+            r.result,
+            r.collected_cards,
+            r.terminated,
+            r.date
+          )
+        );
+        resolve(matches);
       }
     });
   });
@@ -91,55 +188,6 @@ export const getMatchSituations = (matchId) => {
           )
         );
         resolve(situationsInMatch);
-      }
-    });
-  });
-}
-
-export const getUserMatches = (userId) => {
-  return new Promise((resolve, reject) => {
-    const sql = "SELECT * FROM match WHERE user_id = ? and terminated = 'Yes'";
-    db.all(sql, [userId], (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        const matches = rows.map(
-          r => new Match(
-            r.id,
-            r.user_id,
-            r.result,
-            r.collected_cards,
-            r.terminated,
-            r.date
-          )
-        );
-        resolve(matches);
-      }
-    });
-  });
-}
-
-export const deleteMatch = (matchId) => {
-  return new Promise((resolve, reject) => {
-    const sql = "DELETE FROM match WHERE id = ?";
-    db.run(sql, [matchId], function(err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve("ok");
-      }
-    });
-  });
-}
-
-export const deleteMatchSituations = (matchId) => {
-  return new Promise((resolve, reject) => {
-    const sql = "DELETE FROM situation_in_match WHERE match_id = ?";
-    db.run(sql, [matchId], function(err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve("ok");
       }
     });
   });

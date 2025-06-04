@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 // local imports
 import * as MatchDAO from './dao/matchDAO.mjs';
 import * as SituationDAO from './dao/situationDAO.mjs';
+import dayjs from 'dayjs';
 
 // init express
 const app = new express();
@@ -113,26 +114,29 @@ function checkCardOrder(position, misfortune_index, hand) {
 /*** ROUTES ***/
 // POST /api/matches/new - Starting a match
 app.post('/api/matches/new', [
-    check('user_id').isInt()
+    check('demo').isString().isIn(['Yes', 'No'])
   ], async (req, res) => {
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
       return res.status(422).json({errors: validationErrors.array()});
     }
-    const user_id = req.body.user_id;
+
+    //const user_id = req.body.demo === 'No' ? req.session.user.id : null;
+    const user_id = 1; // MOMENTANEO PER TESTING PRIMA DI PASSPORT
     try {
       const match_id = await MatchDAO.addMatch(user_id);
+
       const allSituations = await SituationDAO.getAllSituations();
       const someSituations = getRandomObjects(allSituations, 4);
       const startingHand = someSituations.slice(0, 3);
       const tableSituation = someSituations[3];
 
       await Promise.all(startingHand.map(situation => 
-        MatchDAO.addSituationInMatch(situation.id, match_id, 'Starting hand', 'Won'))
+        MatchDAO.addSituationInMatch(situation.id, match_id, 0, 'Won'))
       );
 
-      // null poichè devo aspettare la risposta del client
-      await MatchDAO.addSituationInMatch(tableSituation.id, match_id, '1', null);
+      // null poichè devo aspettare la risposta del client per l'esito del guess
+      await MatchDAO.addSituationInMatch(tableSituation.id, match_id, 0, null);
 
       const responseData = {
         match_id: match_id,
@@ -156,8 +160,7 @@ app.post('/api/matches/new', [
   }
 )
 
-// protetta, solo per utenti loggati
-// GET /api/matches/<matchId>/situation - Get a new situation for the match
+// GET /api/matches/<matchId>/situation - Get a new situation for a match
 app.get('/api/matches/:matchId/situation',
   async (req, res) => {
     const match_id = parseInt(req.params.matchId);
@@ -168,8 +171,8 @@ app.get('/api/matches/:matchId/situation',
     try {
       const situations = await SituationDAO.getUnseenSituations(match_id);
       const situation = getRandomObjects(situations, 1)[0];
-      const round = 
-      await MatchDAO.addSituationInMatch(situation.id, match_id, )
+      const round = await MatchDAO.incrementAndGetRound(match_id);
+      await MatchDAO.addSituationInMatch(situation.id, match_id, round, null);
 
       const responseData = {
         id: situation.id,
@@ -187,39 +190,64 @@ app.get('/api/matches/:matchId/situation',
 // POST /api/matches/<matchId>/guess - Guess card position
 app.post('/api/matches/:matchId/guess', [
     check('match_id').isInt(),
-    check('guessed_position').isInt(),
-    check('match_situations').isArray(),
     check('guessed_situation_id').isInt(),
-    check('round').isString()
+    check('guessed_position').isInt(),
+    check('match_situations').isArray()
   ], async (req, res) => {
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
       return res.status(422).json({errors: validationErrors.array()});
     }
+
     const match_id = parseInt(req.params.matchId);
     const matchExistance = await MatchDAO.getMatch(match_id);
     if (matchExistance.error) {
       return res.status(404).json(matchExistance);
     }
+    
     try {
+      const end_timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
+      const {true_situation_id, start_timestamp} = await MatchDAO.getGuessStartingTime(match_id);
+
+      // verifico che siano effettivamente passati al massimo 30s + un delta, e che
+      // la situazione indovinata sia quella richiesta prima dal client
+      if (dayjs(end_timestamp).diff(start_timestamp, 'second') > 31 ||
+          req.body.guessed_situation_id !== true_situation_id) {
+        return res.status(422).json({error: 'Guess time exceeded or wrong situation guessed'});
+      }
+      
       const guessedSituation = await SituationDAO.getSituationById(req.body.guessed_situation_id);
       const guessedPosition = req.body.guessed_position;
       const hand = req.body.match_situations;
-      const round = req.body.round;
 
-      let responseData = {};
+      let responseData = {
+        match_state: 'in_progress',
+        complete_situation: {}
+      }
       if (guessedPosition >=0 && checkCardOrder(guessedPosition, guessedSituation.misfortune_index, hand)) {
-        // card won
-        responseData = {
+        // carta vinta
+        responseData.complete_situation = {
           id: guessedSituation.id,
           name: guessedSituation.name,
           misfortune_index: guessedSituation.misfortune_index,
           img_path: guessedSituation.img_path
         };
-        await MatchDAO.addSituationInMatch(guessedSituation.id, match_id, round, 'Won');
+        await MatchDAO.updateSituationInMatch(guessedSituation.id, match_id, 'Won');
+        responseData.guess_result = 'correct';
+        if (await MatchDAO.getWonSituations(match_id) === 6) {
+          // match vinto
+          await MatchDAO.endMatch(match_id, 'Won');
+          responseData.match_state = 'won';
+        }
       } else {
-        // card lost
-        await MatchDAO.addSituationInMatch(guessedSituation.id, match_id, round, 'Lost');
+        // carta persa
+        await MatchDAO.updateSituationInMatch(guessedSituation.id, match_id, 'Lost');
+        responseData.guess_result = 'wrong';
+        if (await MatchDAO.getLostSituations(match_id) === 3) {
+          // match perso
+          await MatchDAO.endMatch(match_id, 'Lost');
+          responseData.match_state = 'lost';
+        }
       }
 
       res.status(201).json(responseData);
@@ -228,36 +256,6 @@ app.post('/api/matches/:matchId/guess', [
     }
   }
 )
-
-// PATCH /api/matches/<matchId>/end - End the match
-app.patch('/api/matches/:matchId/end', [
-    check('result').isString().isIn(['Win', 'Lose']),
-    check('user_id').isInt()
-  ], async (req, res) => {
-    const validationErrors = validationResult(req);
-    if (!validationErrors.isEmpty()) {
-      return res.status(422).json({errors: validationErrors.array()});
-    }
-    const match_id = parseInt(req.params.matchId);
-    const user_id = req.body.user_id;
-    const matchExistance = await MatchDAO.getMatch(match_id);
-    if (matchExistance.error) {
-      return res.status(404).json(matchExistance);
-    }
-    try {
-      // utente anonimo
-      if (user_id < 0) {
-        await MatchDAO.deleteMatch(match_id);
-        await MatchDAO.deleteMatchSituations(match_id);
-      } else {
-        await MatchDAO.endMatch(match_id, req.body.result);     
-      }
-      res.status(200).json();
-    } catch (error) {
-      res.status(503).end();
-    }
-  }
-);
 
 // GET /api/users/<userId>/matches - Get the match history for a user
 app.get('/api/users/:userId/matches', 
@@ -270,7 +268,7 @@ app.get('/api/users/:userId/matches',
       const responseData = await Promise.all(
         matches.map(async (match) => {
           const situations = await MatchDAO.getMatchSituations(match.id);
-          const collected_cards = situations.filter(s => s.result !== 'Lost').length;
+          const collected_cards = situations.filter(s => s.result === 'Won').length;
           return {
             match_id: match.id,
             match_result: match.result,

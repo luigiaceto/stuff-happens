@@ -1,34 +1,62 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import DefaultLayout from './components/DefaultLayout'
+
+const fakeUser={
+  user_id: 1,
+  name: "Mario Rossi"
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState('')
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [message, setMessage] = useState('');
+
+  /*
+  useEffect(() => {
+    const checkAuth = async () => {
+      const user = await API.getUserInfo();
+      // se l'utente non è loggato viene tornato 401
+      // e quindi non si eseguono le due righe successive
+      setLoggedIn(true);
+      setUser(user);
+    };
+    checkAuth();
+  }, []);
+  
+
+  const handleLogin = async (credentials) => {
+    try {
+      const user = await API.logIn(credentials);
+      setLoggedIn(true);
+      setMessage({msg: `Welcome, ${user.name}!`, type: 'success'});
+      setUser(user);
+    } catch(err) {
+      setMessage({msg: err, type: 'danger'});
+    }
+  };
+
+  const handleLogout = async () => {
+    await API.logOut();
+    setLoggedIn(false);
+    setMessage('');
+    setUser('');
+    navigate("/");
+  };
+  */
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Routes>
+      <Route elemet={<DefaultLayout user={user} loggedIn = {loggedIn} handleLogout={handleLogout} message={message} setMessage={setMessage}/>}>
+        <Route path='/' element={<HomeMenu user={user}/>}/>
+        <Route path='/user/:userId/profile' element={<UserProfile user={user}/>}/>
+        <Route path='/match/new' element={<MatchGuessWho user={user}/>}/>
+        <Route path='/match/:matchId/play' element={}/>
+        <Route path='/match/:matchId/end' element={}/>
+        <Route path='*' element={<NotFound/>}/>
+        <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginForm login={handleLogin}/>}/>
+      </Route>
+    </Routes>    
   )
 }
 

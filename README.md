@@ -15,12 +15,12 @@ URL: `/api/matches/new`
 
 HTTP Method: POST
 
-Description: insert a new match into the DB.
+Description: insert a new match into the DB. Uses the session to retrieve the user in case the player is logged-in.
 
 Request body:
 ```
 {
-  "user_id": 23
+  "demo": "Yes"/"No"
 }
 ```
 
@@ -47,8 +47,8 @@ Response body:
 }
 ```
 
-### __Get a new card to guess for the round__
-URL: `/api/matches/:matchId/situation`
+### __Get a new situation for a match__
+URL: `/api/matches/:matchId/situation` (user must be logged-in)
 
 HTTP Method: GET
 
@@ -62,8 +62,8 @@ Response body:
 ```
 {
   "id": 1
-  "name": "Trovo numeri complessi allo scritto di analisi I",
-  "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
+  "name": "Dimentichi il caricabatterie del telefono in hotel",
+  "img_path": "/img/sit1.jpg"
 }
 ```
 
@@ -72,24 +72,23 @@ URL: `/api/matches/:matchId/guess`
 
 HTTP Method: POST
 
-Description: make a guess for the card position. If the guess i correct the body contains its misfortune index, otherwise the response body will be empty. The position starts from 0 and goes up to N (actual cards in hand), e.g. if I wanna guess a card between the first and second card in my hand I should send 1. If I wanna gues the card as the first in hand I should send 0, and if I wanna guess the last card then I'll send N. In case no position in chosen, send -1.
+Description: make a guess for the card position. The position starts from 0 and goes up to N (actual cards in hand), e.g. if I wanna guess a card between the first and second card in my hand I should send 1. If I wanna gues the card as the first in hand I should send 0, and if I wanna guess the last card then I'll send N. In case no position in chosen, send -1.
 
 Request body:
 ```
 {
   "match_id": 1234,
+  "guessed_situation_id": 1,
   "guessed_position": 2,
   "match_situations": [
     {
       "id": 1
-      "name": "Trovo numeri complessi allo scritto di analisi I",
+      "name": "Dimentichi il caricabatterie del telefono in hotel",
       "misfortune_index": 34.6,
-      "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
+      "img_path": "/img/sit1.jpg"
     },
     ...
-  ],
-  "guessed_situation_id": 1,
-  "round": 4
+  ]
 }
 ```
 
@@ -98,36 +97,21 @@ Response: `201 Created` (success), `404 Not Found` (wrong match id), or `503 Ser
 Response body:
 ```
 {
-  "id": 1
-  "name": "Trovo numeri complessi allo scritto di analisi I",
-  "misfortune_index": 34.6,
-  "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
+  "match_state": "in_progress"/"won"/"lost"
+  "guess_result": "correct"/"wrong",
+  "complete_situation": {
+    "id": 1
+    "name": "Trovo numeri complessi allo scritto di analisi I",
+    "misfortune_index": 34.6,
+    "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
+  }
 }
 ```
 
-Note: if the guess isn't correct, then the response body will be empty.
-
-### __End the match__
-URL: `/api/matches/:matchId/end`
-
-HTTP Method: PATCH
-
-Description: conclude the match modifying the match entry in the DB. In case of anonimous user, send -1 in the "user_id" field.
-
-Request body:
-```
-{
-  "result": "Win"/"Lose",
-  "user_id": 23
-}
-```
-
-Response: `200 Ok` (success), `404 Not Found` (wrong match id), or `503 Service Unavailable` (generic error), `422 Unprocessable Entity` (validation error).
-
-Response body: None
+Note: if the guess isn't correct, then the "complete_situation" field will be empty.
 
 ### __Get the match history for a user__
-URL: `/api/users/:userId/matches`
+URL: `/api/users/:userId/matches` (user must be logged-in)
 
 HTTP Method: GET
 
@@ -163,29 +147,31 @@ Response body:
 
 ## Database Tables
 
-| `Situation` |
+| `situation` |
 |-------------|
 | id (int) |
 | name (string) |
 | misfortune_index (real) |
 | img_path (string) |
 
-| `Match` |
+| `match` |
 |---------|
 | id (int) |
 | user_id (int) |
 | result (string) |
+| round (int) |
 | date (string) |
 | terminated (string) |
 
-| `Situation_in_match` |
+| `situation_in_match` |
 |----------------------|
 | situation_id (int) |
 | match_id (int) |
-| round (string) |
+| round (int) |
 | result (string) |
+| timestamp (string) |
 
-| `User` |
+| `user` |
 |--------|
 | id (int) |
 | name (string) |
@@ -194,6 +180,8 @@ Response body:
 | salt (string) |
 
 ## Main React Components
+
+Idea: pagina di new match in cui ho la funzione per fare fetch dal server delle carte iniziali sul click di inizio che poi passa con navigate queste carte alla pagina per giocare che le recupera con useLocation e le mette nello stato (volendo con useEffect ma non serve). A fine match viene mostrata la roba e posso poi con un tasto tornare alla pagina di rulings per iniziare una nuova partita.
 
 - `ListOfSomething` (in `List.js`): component purpose and main functionality
 - `GreatButton` (in `GreatButton.js`): component purpose and main functionality
