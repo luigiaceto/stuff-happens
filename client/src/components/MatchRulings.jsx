@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router';
 
 function MatchStart({user}) {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ function MatchStart({user}) {
         Buon divertimento e buona (s)fortuna !</p>  
 
       <Button variant="success" size="lg" className="w-100 py-3 mb-3" onClick={handleBegin}>
-        Inizia la partita
+        Inizia
       </Button>
     </Container>
   )

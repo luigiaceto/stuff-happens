@@ -14,7 +14,7 @@ function DefaultLayout({user, loggedIn, handleLogout, message, setMessage}) {
         <Outlet />
       </Container>
       <footer className="text-center text-muted mt-5">
-        <p> AW-2025-GuessWhoAnimals | Aceto Luigi</p>
+        <p> AW-2025-Stuff-Happens | Aceto Luigi </p>
       </footer>
     </div>
   );
