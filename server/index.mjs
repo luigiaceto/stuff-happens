@@ -267,7 +267,13 @@ app.get('/api/users/:userId/matches',
 
       const responseData = await Promise.all(
         matches.map(async (match) => {
-          const situations = await MatchDAO.getMatchSituations(match.id);
+          const situations = (await MatchDAO.getMatchSituations(match.id))
+          .map(situation => ({
+            id: situation.id,
+            name: situation.name,
+            round: situation.round,
+            result: situation.result
+          }));
           const collected_cards = situations.filter(s => s.result === 'Won').length;
           return {
             match_id: match.id,

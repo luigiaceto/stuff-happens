@@ -101,9 +101,9 @@ Response body:
   "guess_result": "correct"/"wrong",
   "complete_situation": {
     "id": 1
-    "name": "Trovo numeri complessi allo scritto di analisi I",
+    "name": "Dimentichi il caricabatterie del telefono in hotel",
     "misfortune_index": 34.6,
-    "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg"
+    "img_path": "/img/sit1.jpg"
   }
 }
 ```
@@ -132,9 +132,7 @@ Response body:
     "match_situations": [
       {
         "id": 1
-        "name": "trovo numeri complessi allo scritto di analisi I",
-        "misfortune_index": 34.6,
-        "img_path": "/img/trovo_numeri_complessi_allo_scritto_di_analisiI.jpg",
+        "name": "Dimentichi il caricabatterie del telefono in hotel",
         "round": 2,
         "result": "Won"/"Lost"
       },

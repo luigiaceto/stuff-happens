@@ -1,18 +1,20 @@
-import { useState } from 'react';
-import { useLocation } from 'react-router';
-import { ProgressBar, Container, Row, Alert, Badge, Button, Card, Form } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { ProgressBar, Container, Row, Alert, Badge, Button, Card, Form, Col } from 'react-bootstrap';
+import { Hand, SituationCard } from './Cards.jsx';
 
 function MatchGameplay({user}) {
   const [matchId, setMatchId] = useState('');
-  const [handCards, setHandCards] = useState('');
+  const [handCards, setHandCards] = useState([]);
   const [tableCard, setTableCard] = useState('');
   const [message, setMessage] = useState('');
   const [lostCards, setLostCards] = useState(0);
   const [selectedPosition, setSelectedPosition] = useState(-1);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // carica i dati iniziali della partita nello stato
   useEffect(() => {
-    const location = useLocation();
     const { matchId, startingSituations, tableSituation } = location.state;
     setMatchId(matchId);
     setHandCards(startingSituations);
@@ -21,48 +23,83 @@ function MatchGameplay({user}) {
 
   // gestisce la richiesta di una nuova carta da guessare
   const handleNextCard = () => {
-    selectedPosition(-1);
-
-
-
     setMessage('');
+    setSelectedPosition(-1);
+    setTableCard({ id: 5, name: 'Situation 5', misfortune_index: 56, img_path: 'a' });
+    
   }
 
   // gestisce il guess di una carta, viene chiamata allo scadere del 
   // timer o al click del pulsante
-  const handleGuess = (position) => {
-
-
+  const handleGuess = () => {
+    
+    if (true) {
+      setHandCards(prevHand => {
+        const complete_card = { id: 4, name: 'Situation 4', misfortune_index: 12, img_path: 'a' };
+        const newHand = [...prevHand, complete_card];
+        newHand.sort((a, b) => a.misfortune_index - b.misfortune_index);
+        return newHand;
+      });
+      setMessage({type: 'success', msg: `Guess corretta`});
+    } else if (true) {
+      setLostCards(prev => prev + 1);
+      setMessage({type: 'danger', msg: `Guess sbagliata`});
+    } else if (true) {
+      navigate(`/match/${matchId}/end`, {
+        state: {
+          collected_situations: handCards,
+          match_result: {type: 'success', msg: 'Match won'}}
+      });
+    } else if (true) {
+      navigate(`/match/${matchId}/end`, {
+        state: {
+          collected_situations: handCards,
+          match_result: {type: 'danger', msg: 'Match lost'}
+        }
+      });
+    }    
   }
 
   return (
-    <Container className="text-center">
-      <h2>
-        Carte perse <Badge bg="secondary">{lostCards}</Badge>
-      </h2>
+    <Container>
+      <Row>
+        <Col>
+          <h2 className='ms-2'>
+            Carte perse <Badge bg="secondary">{lostCards}</Badge>
+          </h2>
+        </Col>
+        <Col className='mt-4'>
+          {!message && <CountdownTimer handleGuess={handleGuess}/>}
+        </Col>
+      </Row>
       {message && 
         <Row>
           <Alert variant={message.type}>{message.msg}</Alert>
         </Row>}
-      {!message && <CountdownTimer onComplete={handleGuess}/>}
-      {!message && <SituationCard situation={tableCard}/>}
+      {!message && 
+        <Alert variant="info" className="w-25 mx-auto mt-4">
+          <SituationCard situation={tableCard}/>
+        </Alert>}
       {message &&
         <Button variant="success" size="lg" className="w-100 py-3 mb-3" onClick={handleNextCard}>
           Prossima carta
         </Button>}
-      {!message && 
-        <GuessSelector 
-          setMessage={setMessage} 
-          handCards={handCards} 
-          selectedPosition={selectedPosition} 
-          setSelectedPosition={setSelectedPosition}
-          handleSubmit={handleGuess}/>}
-      <Hand situations={handCards}/>
+      <Container className='mt-5'>
+        <Hand situations={handCards}/>
+        {!message && 
+          <GuessSelector 
+            setMessage={setMessage} 
+            handCards={handCards} 
+            selectedPosition={selectedPosition} 
+            setSelectedPosition={setSelectedPosition}
+            handleGuess={handleGuess}/>
+        }
+      </Container>
     </Container>
   );
 }
 
-const CountdownTimer = ({ onComplete }) => {
+const CountdownTimer = ({ handleGuess }) => {
   const [elapsed, setElapsed] = useState(0);
   const [running, setRunning] = useState(true);
 
@@ -75,7 +112,7 @@ const CountdownTimer = ({ onComplete }) => {
         if (prev >= 59) {
           clearInterval(intervalId);
           setRunning(false); // ferma il timer
-          onComplete();      // chiama la callback
+          handleGuess();      // chiama la callback
           return 60;
         }
         return prev + 1;
@@ -99,13 +136,12 @@ const CountdownTimer = ({ onComplete }) => {
       now={percentage} 
       label={`${Math.ceil((30 - elapsed * 0.5))}s`} 
       animated 
-      striped 
-      variant="info"
+      variant="success"
     />
   );
 };
 
-export function GuessSelector({handCards, selectedPosition, setSelectedPosition, handleSubmit}) {
+export function GuessSelector({handCards, selectedPosition, setSelectedPosition, handleGuess}) {
   const generateOptions = () => {
     const options = [];
     for (let i = 1; i <= handCards.length+1; i++) {
@@ -125,10 +161,9 @@ export function GuessSelector({handCards, selectedPosition, setSelectedPosition,
     <Container>
       <Card className="mt-4">
         <Card.Body>
-          <Card.Title className="mb-4">Seleziona la posizione nella tua mano in cui mettere la carta sul tavolo</Card.Title>
+          <Card.Title className="mb-4">Seleziona la posizione nella tua mano (da sinistra) in cui mettere la carta del tavolo</Card.Title>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label>Posizione</Form.Label>
               <Form.Select value={selectedPosition} onChange={handlePositionChange}>
                 <option value={-1}>Nessuna</option>
                 {generateOptions()}
@@ -137,42 +172,13 @@ export function GuessSelector({handCards, selectedPosition, setSelectedPosition,
           </Form>
             
           {selectedPosition && 
-            <Button variant="primary mt-2 me-3" onClick={() => handleSubmit()}>
-              Confirm guess
+            <Button variant="primary mt-2 me-3" onClick={() => handleGuess()}>
+              Conferma
             </Button>}
         </Card.Body>
       </Card>
     </Container>
   );
-}
-
-function Hand({situations}) {
-  return (
-    <Row className="g-2">
-      {situations.map(situation => (
-        <SituationCard situation={situation}/>
-      ))}
-    </Row>
-  );
-}
-
-function SituationCard({situation}) {
-  return (
-    <Card className="h-100" style={{ maxWidth: '120px', margin: '0 auto' }}>
-      <div className="position-relative" style={{ paddingBottom: '100%' }}>
-        <Card.Img
-          variant="top"
-          src={`http://localhost:3001${situation.img_path}`}
-          className="position-absolute w-100 h-100"
-          style={{ objectFit: 'cover', top: 0, left: 0 }}
-        />
-      </div>
-      <Card.Body className="p-2 text-center">
-        <Card.Title>{situation.name}</Card.Title>
-        {situation.misfortune_index && <Card.Text>{situation.misfortune_index}</Card.Text>}
-      </Card.Body>
-    </Card>
-  )
 }
 
 export default MatchGameplay;
