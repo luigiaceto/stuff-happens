@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router';
 import { Container, Button } from 'react-bootstrap';
+import API from '../API.mjs';
 
-function MatchStart({user}) {
+function MatchStart({loggedIn}) {
   const navigate = useNavigate();
 
-  const handleBegin = () => {
-
+  const handleBegin = async () => {
+    /*
     const startingSituations = [
       { id: 1, name: 'Situation 2', misfortune_index: 22.1, img_path: 'a' },
       { id: 2, name: 'Situation 1', misfortune_index: 10, img_path: 'a' },
@@ -13,12 +14,15 @@ function MatchStart({user}) {
     ]
     const tableSituation = { id: 4, name: 'Situation 4', img_path: 'a' };
     const matchId = 1; 
+    */
 
-    navigate(`/match/${matchId}/play`, {
+    const matchInfo = await API.startMatch(loggedIn ? 'No' : 'Yes');
+    const { match_id, starting_situations, table_situation } = matchInfo;
+    navigate(`/match/${match_id}/play`, {
       state: {
-        matchId: matchId,
-        startingSituations: startingSituations.sort((a, b) => a.misfortune_index - b.misfortune_index),
-        tableSituation: tableSituation
+        matchId: match_id,
+        startingSituations: starting_situations.sort((a, b) => a.misfortune_index - b.misfortune_index),
+        tableSituation: table_situation
       }
     });
   }

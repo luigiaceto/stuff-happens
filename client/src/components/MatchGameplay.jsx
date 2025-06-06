@@ -32,8 +32,9 @@ function MatchGameplay({user}) {
   // gestisce il guess di una carta, viene chiamata allo scadere del 
   // timer o al click del pulsante
   const handleGuess = () => {
-    
-    if (true) {
+    const sel = 3
+
+    if (sel==1) {
       setHandCards(prevHand => {
         const complete_card = { id: 4, name: 'Situation 4', misfortune_index: 12, img_path: 'a' };
         const newHand = [...prevHand, complete_card];
@@ -41,20 +42,20 @@ function MatchGameplay({user}) {
         return newHand;
       });
       setMessage({type: 'success', msg: `Guess corretta`});
-    } else if (true) {
+    } else if (sel==2) {
       setLostCards(prev => prev + 1);
       setMessage({type: 'danger', msg: `Guess sbagliata`});
-    } else if (true) {
+    } else if (sel==3) {
       navigate(`/match/${matchId}/end`, {
         state: {
           collected_situations: handCards,
-          match_result: {type: 'success', msg: 'Match won'}}
+          match_result: {type: 'success', msg: 'Partita vinta!'}}
       });
-    } else if (true) {
+    } else if (sel==4) {
       navigate(`/match/${matchId}/end`, {
         state: {
           collected_situations: handCards,
-          match_result: {type: 'danger', msg: 'Match lost'}
+          match_result: {type: 'danger', msg: 'Partita persa!'}
         }
       });
     }    
@@ -81,9 +82,11 @@ function MatchGameplay({user}) {
           <SituationCard situation={tableCard}/>
         </Alert>}
       {message &&
-        <Button variant="success" size="lg" className="w-100 py-3 mb-3" onClick={handleNextCard}>
-          Prossima carta
-        </Button>}
+        <div className="text-center">
+          <Button variant="success" size="lg" className="w-25 py-3 mb-3" onClick={handleNextCard}>
+            Prossima carta
+          </Button>
+        </div>}
       <Container className='mt-5'>
         <Hand situations={handCards}/>
         {!message && 
@@ -103,31 +106,30 @@ const CountdownTimer = ({ handleGuess }) => {
   const [elapsed, setElapsed] = useState(0);
   const [running, setRunning] = useState(true);
 
-  // Effetto che gestisce il timer ogni 500ms
   useEffect(() => {
     if (!running) return;
 
     const intervalId = setInterval(() => {
-      setElapsed(prev => {
-        if (prev >= 59) {
-          clearInterval(intervalId);
-          setRunning(false); // ferma il timer
-          handleGuess();      // chiama la callback
-          return 60;
-        }
-        return prev + 1;
-      });
+      setElapsed(prev => prev + 1);
     }, 500);
 
-    // Pulisce l’intervallo se running cambia o il componente si smonta
     return () => clearInterval(intervalId);
   }, [running]);
 
+  /*
   // Fa partire il timer al mount
   useEffect(() => {
     setElapsed(0);
     setRunning(true);
-  }, []); // solo al mount
+  }, []);
+  */
+
+  useEffect(() => {
+    if (elapsed >= 60 && running) {
+      setRunning(false);
+      handleGuess();
+    }
+  }, [elapsed, running]);
 
   const percentage = 100 - (elapsed / 60) * 100;
 

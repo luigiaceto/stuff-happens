@@ -1,12 +1,25 @@
 import { Container, Button, Card, Row, Col } from 'react-bootstrap';
 import { Link } from "react-router";
+import SplitText from "./reactbits_components/SplitText.jsx";
 
 function HomeMenu() {
   return (
     <Container className="text-center">
-      <Card className="border-0 bg-transparent mb-5">
+      <Card className="display-2 border-0 bg-transparent mb-5">
         <Card.Body>
-          <h1 className="display-4 mb-4">Benvenuto in Stuff Happens!</h1>
+          <SplitText
+            text="Benvenuto in Stuff Happens!"
+            className="text-2xl font-semibold text-center"
+            delay={50}
+            duration={0.3}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin="-100px"
+            textAlign="center"
+          />
           <p className="lead mb-5">
             Scopri fino a 50 situazioni in cui potresti trovarti durante una
             vacanza e prova a indovinare le più assurde e sfortunate.

@@ -5,8 +5,9 @@ import { Match, Situation } from './models.mjs';
 import * as UserDAO from './dao/userDAO.mjs';
 
 async function main() {
+  
+  //await SituationDAO.clearSituations();
   /*
-  await SituationDAO.clearSituations();
   const sit1 = new Situation(0, "Dimentichi il caricabatterie del telefono in hotel", 2.5, "img/sit1.png");
   await SituationDAO.addSituation(sit1);
   const sit2 = new Situation(1, "Ti si rompe la cerniera della valigia appena arrivato", 5.0, "img/sit2.png");

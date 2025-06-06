@@ -69,7 +69,9 @@ function UserProfile({user}) {
 function MatchList({matches}) {
   return (
     <Accordion>
-      {matches.map((match) => (
+      {matches
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .map((match) => (
         <Match key={match.match_id} match={match}/>
       ))}
     </Accordion>

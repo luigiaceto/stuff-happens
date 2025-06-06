@@ -63,11 +63,11 @@ function App() {
       <Route element={<DefaultLayout user={user} loggedIn={loggedIn} handleLogout={handleLogout} message={message} setMessage={setMessage}/>}>
         <Route path='/' element={<HomeMenu/>}/>
         <Route path='/user/:userId/profile' element={<UserProfile user={user}/>}/>
-        <Route path='/match/new' element={<MatchRulings user={user}/>}/>
+        <Route path='/match/new' element={<MatchRulings loggedIn={loggedIn}/>}/>
         <Route path='/match/:matchId/play' element={<MatchGameplay user={user}/>}/>
-        {/*<Route path='/match/:matchId/end' element={<MatchEnd/>}/>
+        <Route path='/match/:matchId/end' element={<MatchEnd/>}/>
         <Route path='*' element={<NotFound/>}/>
-        <Route path='/login' element={loggedIn ? <Navigate replace to='/'/> : <LoginForm login={handleLogin}/>}/>*/}
+        {/*<Route path='/login' element={loggedIn ? <Navigate replace to='/'/> : <LoginForm login={handleLogin}/>}/>*/}
       </Route>
     </Routes>    
   )
