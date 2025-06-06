@@ -9,10 +9,10 @@ function MatchEnd() {
   const [matchInfo, setMatchInfo] = useState(null); 
 
   useEffect(() => {
-    const { collected_situations, match_result } = location.state;
+    const { collected_situations, end_message } = location.state;
     setMatchInfo({
       collected_situations: collected_situations,
-      match_result: match_result
+      match_result: end_message
     });
   }, []);
 

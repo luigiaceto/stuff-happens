@@ -22,6 +22,7 @@ app.use(morgan('dev'));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/img', express.static(path.join(__dirname, '..', 'img')));
+*/
 
 // set up and enable CORS
 const corsOption = {
@@ -30,11 +31,11 @@ const corsOption = {
     optionsSuccessStatus: 200,
     // permette l'invio di cookies tra domini diversi e l'uso di 
     // Authorization headers se presenti
-    credentials: true
+    /*credentials: true*/
 };
 // applica il middlewere CORS a tutte le routes del server
 app.use(cors(corsOption));
-
+/*
 // Set up Passport
 // - utilizzo della local strategy ceh sfrutta username e password
 // - verify è una callback di verifica chiamata con username e
@@ -125,7 +126,6 @@ app.post('/api/matches/new', [
     const user_id = 1; // MOMENTANEO PER TESTING PRIMA DI PASSPORT
     try {
       const match_id = await MatchDAO.addMatch(user_id);
-
       const allSituations = await SituationDAO.getAllSituations();
       const someSituations = getRandomObjects(allSituations, 4);
       const startingHand = someSituations.slice(0, 3);
@@ -134,9 +134,9 @@ app.post('/api/matches/new', [
       await Promise.all(startingHand.map(situation => 
         MatchDAO.addSituationInMatch(situation.id, match_id, 0, 'Won'))
       );
-
+      
       // null poichè devo aspettare la risposta del client per l'esito del guess
-      await MatchDAO.addSituationInMatch(tableSituation.id, match_id, 0, null);
+      await MatchDAO.addSituationInMatch(tableSituation.id, match_id, 1, null);
 
       const responseData = {
         match_id: match_id,
@@ -208,6 +208,8 @@ app.post('/api/matches/:matchId/guess', [
     try {
       const end_timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
       const {true_situation_id, start_timestamp} = await MatchDAO.getGuessStartingTime(match_id);
+
+      console.log(true_situation_id, " ", start_timestamp, " ", end_timestamp);
 
       // verifico che siano effettivamente passati al massimo 30s + un delta, e che
       // la situazione indovinata sia quella richiesta prima dal client

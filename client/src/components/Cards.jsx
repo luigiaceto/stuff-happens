@@ -12,7 +12,7 @@ export function Hand({situations}) {
 
 export function SituationCard({situation}) {
   return (
-    <Card className="h-100" style={{ maxWidth: '120px', margin: '0 auto' }}>
+    <Card className="h-100" style={{ width: '200px', height: '70px', margin: '0 auto' }}>
       <div className="position-relative" style={{ paddingBottom: '100%' }}>
         <Card.Img
           variant="top"

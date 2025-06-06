@@ -6,16 +6,6 @@ function MatchStart({loggedIn}) {
   const navigate = useNavigate();
 
   const handleBegin = async () => {
-    /*
-    const startingSituations = [
-      { id: 1, name: 'Situation 2', misfortune_index: 22.1, img_path: 'a' },
-      { id: 2, name: 'Situation 1', misfortune_index: 10, img_path: 'a' },
-      { id: 3, name: 'Situation 3', misfortune_index: 30, img_path: 'a' }
-    ]
-    const tableSituation = { id: 4, name: 'Situation 4', img_path: 'a' };
-    const matchId = 1; 
-    */
-
     const matchInfo = await API.startMatch(loggedIn ? 'No' : 'Yes');
     const { match_id, starting_situations, table_situation } = matchInfo;
     navigate(`/match/${match_id}/play`, {

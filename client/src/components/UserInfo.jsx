@@ -1,55 +1,18 @@
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { Container, Col, Card, Badge, Accordion, Row } from 'react-bootstrap';
+import { Container, Col, Card, Badge, Accordion } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import API from '../API.mjs';
 
 function UserProfile({user}) {
   const [matches, setMatches] = useState([]);
 
+  // fetch i match dell'utente al mount
   useEffect(() => {
-    // recupero match history dell'user
-    const match_list = [
-      {
-        match_id: 1234,
-        match_result: "Win",
-        card_collected: 4,
-        date: "2025-05-23",
-        match_situations: [
-          {
-            id: 1,
-            name: "sgrodo nello stau" ,
-            misfortune_index: 34.6,
-            img_path: "/img/sit1.jpg",
-            round: 2,
-            result: "Won"
-          },
-          {
-            id: 2,
-            name: "sgrodo nello stau 2",
-            misfortune_index: 12.3,
-            img_path: "/img/sit2.jpg",
-            round: 1,
-            result: "Lost"
-          }
-        ]
-      },
-      {
-        match_id: 5678,
-        match_result: "Lost",
-        card_collected: 2,
-        date: "2025-05-24",
-        match_situations: [
-          {
-            id: 3,
-            name: "sgrodo nello stau 3",
-            misfortune_index: 45.1,
-            img_path: "/img/sit3.jpg",
-            round: 1,
-            result: "Lost"
-          }
-        ]
-      }
-    ]
-    setMatches(match_list);
+    const getMatches = async () => {
+      const matches = await API.getMatchHistory(user.user_id);
+      setMatches(matches);
+    };
+    getMatches();
   }, []);
 
   return (
@@ -87,7 +50,7 @@ function Match({match}) {
           <span>Cards collected: {match.card_collected}</span>
         </Col>
         <Col className="text-end me-4">
-          <Badge bg={match.match_result === 'Win' ? 'success' : 'danger'}>
+          <Badge bg={match.match_result === 'Won' ? 'success' : 'danger'}>
             {match.match_result}
           </Badge>
         </Col> 

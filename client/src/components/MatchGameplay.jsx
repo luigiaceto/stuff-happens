@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { ProgressBar, Container, Row, Alert, Badge, Button, Card, Form, Col } from 'react-bootstrap';
 import { Hand, SituationCard } from './Cards.jsx';
+import API from '../API.mjs';
 
-function MatchGameplay({user}) {
+function MatchGameplay() {
   const [matchId, setMatchId] = useState('');
   const [handCards, setHandCards] = useState([]);
   const [tableCard, setTableCard] = useState('');
@@ -22,43 +23,44 @@ function MatchGameplay({user}) {
   }, []);
 
   // gestisce la richiesta di una nuova carta da guessare
-  const handleNextCard = () => {
+  const handleNextCard = async () => {
     setMessage('');
     setSelectedPosition(-1);
-    setTableCard({ id: 5, name: 'Situation 5', misfortune_index: 56, img_path: 'a' });
-    
+    const nextSituation = await API.getNextSituation(matchId);
+    setTableCard(nextSituation);
   }
 
   // gestisce il guess di una carta, viene chiamata allo scadere del 
   // timer o al click del pulsante
-  const handleGuess = () => {
-    const sel = 3
+  const handleGuess = async () => {
+    const guessResult = await API.guessPosition(matchId, tableCard.id, selectedPosition, handCards);
 
-    if (sel==1) {
+    let guess_message = {type: 'success', msg: 'Hai indovinato la posizione!'};
+    if (guessResult.guess_result === 'correct') {
       setHandCards(prevHand => {
-        const complete_card = { id: 4, name: 'Situation 4', misfortune_index: 12, img_path: 'a' };
-        const newHand = [...prevHand, complete_card];
+        const newHand = [...prevHand, guessResult.complete_situation];
         newHand.sort((a, b) => a.misfortune_index - b.misfortune_index);
         return newHand;
       });
-      setMessage({type: 'success', msg: `Guess corretta`});
-    } else if (sel==2) {
+    } else {
+      guess_message = {type: 'danger', msg: 'Hai sbagliato la posizione!'};
       setLostCards(prev => prev + 1);
-      setMessage({type: 'danger', msg: `Guess sbagliata`});
-    } else if (sel==3) {
+    }
+    
+    if (guessResult.match_state !== 'in_progress') {
+      let end_message = {type: 'success', msg: 'Partita vinta!'};
+      if (guessResult.match_state === 'lost') {
+        end_message = {type: 'danger', msg: 'Partita persa!'};
+      }
       navigate(`/match/${matchId}/end`, {
         state: {
           collected_situations: handCards,
-          match_result: {type: 'success', msg: 'Partita vinta!'}}
-      });
-    } else if (sel==4) {
-      navigate(`/match/${matchId}/end`, {
-        state: {
-          collected_situations: handCards,
-          match_result: {type: 'danger', msg: 'Partita persa!'}
+          end_message: end_message
         }
       });
-    }    
+    }
+
+    setMessage(guess_message);
   }
 
   return (
