@@ -257,8 +257,7 @@ app.post('/api/matches/:matchId/guess', [
           responseData.match_state = 'lost';
         }
       }
-
-      console.log(responseData);
+      
       res.status(201).json(responseData);
     } catch (error) {
       res.status(503).end();

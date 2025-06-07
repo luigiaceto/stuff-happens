@@ -34,9 +34,9 @@ function MatchStart({loggedIn}) {
         {!loggedIn && <li>Ricordati di *eseguire il login* per avere accesso completo all'app, altrimenti potrai solo provare il gioco 
           tramite partite demo di un solo round :)</li>}
       </ul>
-      <p className='mt-4'> Esempio: se vuoi mettere la carta in mano come 1a da sinistra
-        seleziona 1, se vuoi metterla come 2a seleziona 2 ... se vuoi mettere la carta in mano come ultima
-        allora seleziona l'ultima posizione disponibile</p>
+      <p className='mt-4'> Esempio: se vuoi rendere la carta sul tavolo la 1a (da sinistra) tra le carte nella tua mano seleziona 1, se 
+        vuoi metterla come 2a nella tua mano seleziona 2 ... se vuoi metterla come ultima allora seleziona l'ultima posizione 
+        disponibile</p>
       <h3 className='text-center'>Buon divertimento e buona (s)fortuna !</h3>
       <Container className="text-center">
         <Button variant="success" size="lg" className="w-25 py-3 mb-3 mt-5 mx-auto" onClick={handleBegin}>

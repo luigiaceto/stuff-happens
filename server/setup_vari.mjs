@@ -5,7 +5,8 @@ import { Match, Situation } from './models.mjs';
 import * as UserDAO from './dao/userDAO.mjs';
 
 async function main() {
-  
+  await MatchDAO.clearMatches();
+  await MatchDAO.clearSituationsInMatch();
   await SituationDAO.clearSituations();
   const sit1 = new Situation(0, "INDICE 1", 1, "img/sit1.png");
   await SituationDAO.addSituation(sit1);
@@ -36,7 +37,7 @@ async function main() {
   await SituationDAO.addSituation(sit7);
   const sit8 = new Situation(7, "Ti si scarica il telefono proprio quando devi usare Google Maps", 17.5, "img/sit8.png");
   await SituationDAO.addSituation(sit8);
-  const sit9 = new Situation(8, "Perdi la connessione per il volo di coincidenza", 18.0, "img/sit9.png");
+  const sit9 = new Situation(8, "Non ti prende il telefono sull'isola per mezz'ora da solo", 18.0, "img/sit9.png");
   await SituationDAO.addSituation(sit9);
   const sit10 = new Situation(9, "Perdi un giorno di vacanza per il jet lag", 20.0, "img/sit10.png");
   await SituationDAO.addSituation(sit10);
@@ -46,7 +47,7 @@ async function main() {
   await SituationDAO.addSituation(sit12);
   const sit13 = new Situation(12, "Prenoti l'hotel sbagliato in una città diversa", 27.5, "img/sit13.png");
   await SituationDAO.addSituation(sit13);
-  const sit14 = new Situation(13, "Ti viene negato l'imbarco per overbooking", 28.0, "img/sit14.png");
+  const sit14 = new Situation(13, "Ti viene negato l'imbarco per overbooking (troppi biglietti venduti)", 28.0, "img/sit14.png");
   await SituationDAO.addSituation(sit14);
   const sit15 = new Situation(14, "Scopri che la spiaggia dei tuoi sogni è chiusa per inquinamento", 30.0, "img/sit15.png");
   await SituationDAO.addSituation(sit15);
@@ -108,7 +109,7 @@ async function main() {
   await SituationDAO.addSituation(sit43);
   const sit44 = new Situation(43, "Rimani coinvolto in un colpo di stato mentre sei in vacanza", 88.0, "img/sit44.png");
   await SituationDAO.addSituation(sit44);
-  const sit45 = new Situation(44, "Ti attacca uno squalo mentre fai snorkeling", 90.0, "img/sit45.png");
+  const sit45 = new Situation(44, "Ti attacca uno squalo mentre fai immersione", 90.0, "img/sit45.png");
   await SituationDAO.addSituation(sit45);
   const sit46 = new Situation(45, "Rimani intrappolato in una valanga sulle Alpi", 92.5, "img/sit46.png");
   await SituationDAO.addSituation(sit46);

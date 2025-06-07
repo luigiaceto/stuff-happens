@@ -36,15 +36,21 @@ function MatchGameplay() {
     const guessResult = await API.guessPosition(matchId, tableCard.id, selectedPosition, handCards);
 
     let guess_message = {type: 'success', msg: 'Hai indovinato la posizione!'};
+    // utilizzo una variabile aggiuntiva poichè nell'ultima guess il navigate parte
+    // prima che il setHandCards venga eseguito. Dunque lo stato non verrebbe aggiornato
+    // e l'ultima carta indovinata (in caso di vittoria) non verrebbe mostrata nella 
+    // schermata finale (è un problema solo di frontend poichè nel DB la carta è stata già
+    // aggiunta alla partita)
+    let updatedHandCards = [...handCards];
     if (guessResult.guess_result === 'correct') {
-      let updatedHandCards = [...handCards, guessResult.complete_situation];
+      updatedHandCards = [...handCards, guessResult.complete_situation];
       updatedHandCards.sort((a, b) => a.misfortune_index - b.misfortune_index);
       setHandCards(updatedHandCards);
     } else {
       guess_message = {type: 'danger', msg: 'Hai sbagliato la posizione!'};
       setLostCards(prev => prev + 1);
     }
-    
+    console.log(guessResult);
     if (guessResult.match_state !== 'in_progress') {
       let end_message = {type: 'success', msg: 'Partita vinta!'};
       if (guessResult.match_state === 'lost') {
@@ -52,7 +58,7 @@ function MatchGameplay() {
       }
       navigate(`/match/${matchId}/end`, {
         state: {
-          collected_situations: handCards,
+          collected_situations: updatedHandCards,
           end_message: end_message
         }
       });
