@@ -47,7 +47,7 @@ function Match({match}) {
       <Accordion.Header>
         <Col>
           <span className="me-4">{match.date}</span>
-          <span>Cards collected: {match.card_collected}</span>
+          <span>Carte collezionate: {match.card_collected}</span>
         </Col>
         <Col className="text-end me-4">
           <Badge bg={match.match_result === 'Won' ? 'success' : 'danger'}>

@@ -5,7 +5,7 @@ import { Match, Situation } from "../models.mjs";
 export const addMatch = (user_id) => {
   return new Promise((resolve, reject) => {
     const sql = "INSERT INTO match (user_id, result, round, terminated, date) VALUES (?, ?, ?, ?, ?)";
-    db.run(sql, [user_id, null, 1, 'No', dayjs().format('YYYY-MM-DD')], function(err) {
+    db.run(sql, [user_id, null, 1, 'No', dayjs().format('YYYY-MM-DD hh:mm:ss')], function(err) {
       if (err) {
         reject(err);
       } else {

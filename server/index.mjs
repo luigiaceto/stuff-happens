@@ -6,6 +6,7 @@ import { check, validationResult } from 'express-validator';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dayjs from 'dayjs';
+import crypto from 'crypto';
 
 // passport imports
 import passport from 'passport';
@@ -88,7 +89,7 @@ app.use(session({
 app.use(passport.authenticate('session'));
 
 /*** Utils ***/
-function getRandomObjects(array, n) {
+function getRandomObjectsA(array, n) {
   const arrayCopy = [...array];
   const result = [];
     
@@ -101,6 +102,34 @@ function getRandomObjects(array, n) {
   }
     
   return result;
+}
+
+function getRandomObjects(array, n) {
+  const arrayCopy = [...array];
+  const result = [];
+
+  while (result.length < n) {
+    const randomIndex = getSecureRandomInt(0, arrayCopy.length - 1);
+    result.push(arrayCopy.splice(randomIndex, 1)[0]);
+  }
+
+  return result;
+
+  // interi casuali sicuri con crypto
+  function getSecureRandomInt(min, max) {
+    const range = max - min + 1;
+    const maxUint32 = 2 ** 32;
+    const maxAcceptable = Math.floor(maxUint32 / range) * range;
+
+    let rand;
+    do {
+      const array = new Uint32Array(1);
+      crypto.getRandomValues(array);
+      rand = array[0];
+    } while (rand >= maxAcceptable);
+
+    return min + (rand % range);
+  }
 }
 
 //  A  B  C  D
@@ -221,8 +250,10 @@ app.post('/api/matches/:matchId/guess', [
       // verifico che siano effettivamente passati al massimo 30s + un delta, e che
       // la situazione indovinata sia quella richiesta prima dal client
       if (dayjs(end_timestamp).diff(start_timestamp, 'second') > 31 ||
-          req.body.guessed_situation_id !== true_situation_id) {
-        return res.status(422).json({error: 'Guess time exceeded or wrong situation guessed'});
+          req.body.guessed_situation_id !== true_situation_id || 
+          req.body.match_situations.length > 5 ||
+          req.body.guessed_position > req.body.match_situations.length) {
+        return res.status(422).json({error: 'Sospetto di cheating o tentativo di exploit, sei stato cacciato dalla partita :('});
       }
       
       const guessedSituation = await SituationDAO.getSituationById(req.body.guessed_situation_id);
@@ -257,7 +288,7 @@ app.post('/api/matches/:matchId/guess', [
           responseData.match_state = 'lost';
         }
       }
-      
+
       res.status(201).json(responseData);
     } catch (error) {
       res.status(503).end();
