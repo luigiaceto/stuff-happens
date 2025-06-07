@@ -1,14 +1,13 @@
-function Match(id, user_id, result, collected_cards, terminated, date) {
+function Match(id, user_id, result, round, terminated, date) {
   this.id = id;
   this.user_id = user_id;
   this.result = result;
-  this.collected_cards = collected_cards;
+  this.round = round;
   this.terminated = terminated;
   this.date = date;
 }
 
-// exploit the Situation model both to exchange data about the situation and
-// the situation in a match
+// il timestamp non mi serve quando restituisco una situazione
 function Situation(id, name, misfortune_index, img_path, match_id=null, round=null, result=null) {
   this.id = id;
   this.name = name;

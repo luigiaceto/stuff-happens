@@ -14,6 +14,19 @@ export const addUser = (name, email, password, salt) => {
   });
 }
 
+export const clearUsers = () => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM user";
+    db.run(sql, [], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve("ok");
+      }
+    });
+  });
+}
+
 export const getUser = (email, password) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT * FROM user WHERE email = ?';
@@ -25,9 +38,9 @@ export const getUser = (email, password) => {
         resolve(false); 
       }
       else {
-        const user = {user_id: row.user_id, email: row.email, name: row.name};
+        const user = {id: row.id, email: row.email, name: row.name};
         
-        crypto.scrypt(password, row.salt, 16, function(err, hashedPassword) {
+        crypto.scrypt(password, row.salt, 32, function(err, hashedPassword) {
           if (err) reject(err);
           if(!crypto.timingSafeEqual(Buffer.from(row.password, 'hex'), hashedPassword))
             resolve(false);

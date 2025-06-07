@@ -25,21 +25,25 @@ function MatchStart({loggedIn}) {
         <li>Lo scopo del gioco è di arrivare a 6 carte in mano, inserendone una alla volta dal tavolo seguendo l'ordine 
             crescente dell'indice di sfortuna (che dovrai immaginare per le carte del tavolo)</li> 
         <li>Ogni round avrai 30 secondi per 
-            indovinare la posizione, tra le carte della tua mano.</li>
-        <li>Per eseguire la scelta avrai a disposizione un selettore. potrai selezionare una posizione da 1 ad n+1, dove n sono le carte
+            indovinare la posizione, tra le carte della tua mano</li>
+        <li>Per eseguire la scelta avrai a disposizione un selettore. Potrai selezionare una posizione da 1 ad n+1, dove n sono le carte
             che avrai in mano ad ogni round</li>
         <li>Se non selezioni nulla
             perdi il round automaticamente, altrimenti se indovini guadagni la carta</li>
         <li>Se perdi 3 carte in totale la partita è persa complessivamente</li>
+        {!loggedIn && <li>Ricordati di *eseguire il login* per avere accesso completo all'app, altrimenti potrai solo provare il gioco 
+          tramite partite demo di un solo round :)</li>}
       </ul>
-      <p className='mt-5'> Esempio: se vuoi mettere la carta in mano come 1a da sinistra
-        seleziona 1, se vuoi metterla come 2a seleziona 2 e così via...</p>
+      <p className='mt-4'> Esempio: se vuoi mettere la carta in mano come 1a da sinistra
+        seleziona 1, se vuoi metterla come 2a seleziona 2 ... se vuoi mettere la carta in mano come ultima
+        allora seleziona l'ultima posizione disponibile</p>
       <h3 className='text-center'>Buon divertimento e buona (s)fortuna !</h3>
       <Container className="text-center">
         <Button variant="success" size="lg" className="w-25 py-3 mb-3 mt-5 mx-auto" onClick={handleBegin}>
           Inizia
         </Button>
       </Container>
+
     </Container>
   )
 }

@@ -26,7 +26,7 @@ export const getMatch = (match_id) => {
           row.id,
           row.user_id,
           row.result,
-          row.collected_cards,
+          row.round,
           row.terminated,
           row.date
         );
@@ -154,7 +154,7 @@ export const getUserMatches = (userId) => {
             r.id,
             r.user_id,
             r.result,
-            r.collected_cards,
+            r.round,
             r.terminated,
             r.date
           )
@@ -194,7 +194,7 @@ export const getMatchSituations = (matchId) => {
   });
 }
 
-// cleans-up the match table
+// pulisce la tabella match
 export const clearMatches = () => {
   return new Promise((resolve, reject) => {
     const sql = "DELETE FROM match";
@@ -208,7 +208,7 @@ export const clearMatches = () => {
   });
 }
 
-// cleans-up the situation_in_match table
+// pulisce la tabella situation_in_match
 export const clearSituationsInMatch = () => {
   return new Promise((resolve, reject) => {
     const sql = "DELETE FROM situation_in_match";

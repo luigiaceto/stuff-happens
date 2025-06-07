@@ -4,18 +4,22 @@
 
 ## React Client Application Routes
 
-- Route `/`: page content and purpose
-- Route `/something/:param`: page content and purpose, param specification
-- ...
+- Route `/`: home dell'app (landing page)
+- Route `/user/:userId/profile`: profilo dell'utente loggato, mostra la cronologia delle partite giocate dall'utente con id nel DB pari a userId
+- Route `/match/new`: pagina con regole del gioco, permette di iniziare effettivamente una partita (demo o non demo)
+- Route `/match/:matchId/play`: pagina in cui viene giocata la partita con id nel DB pari a matchId
+- Route `/match/:matchId/end`: pagina su cui si viene rediretti dopo la fine della partita con id nel DB pari a matchId
+- Route `/login`: pagina per eseguire il login di un utente
+- Route `*`: pagina che rappresenta una route a cui non è associata nessuna pagina. Quando si inserisce nell'URL una route non uguale a quelle appena elencate si viene rediretti a '*'
 
 ## API Server
 
-### __Starting a match__
+### __Inizia una partita__
 URL: `/api/matches/new`
 
 HTTP Method: POST
 
-Description: insert a new match into the DB. Uses the session to retrieve the user in case the player is logged-in.
+Description: inserisce un nuovo match nel DB. Usa la sessione per ottenere l'user nel caso il giocator sia loggato.
 
 Request body:
 ```
@@ -47,12 +51,12 @@ Response body:
 }
 ```
 
-### __Get a new situation for a match__
-URL: `/api/matches/:matchId/situation` (user must be logged-in)
+### __Ottieni una nuova situazione da indovinare__
+URL: `/api/matches/:matchId/situation` (protected by user authentication)
 
 HTTP Method: GET
 
-Description: get a new card from the deck that the player will guess the position of.
+Description: ottieni una nuova carta dal mazzo da indovinare.
 
 Request body: None
 
@@ -67,12 +71,12 @@ Response body:
 }
 ```
 
-### __Guess card position__
+### __Indovina la posizione della carta sul tavolo__
 URL: `/api/matches/:matchId/guess`
 
 HTTP Method: POST
 
-Description: make a guess for the card position. The position starts from 0 and goes up to N (actual cards in hand), e.g. if I wanna guess a card between the first and second card in my hand I should send 1. If I wanna gues the card as the first in hand I should send 0, and if I wanna guess the last card then I'll send N. In case no position in chosen, send -1.
+Description: fai una guess per la posizione della carta. La posizione inizia da 0 e arriva ad N (numero di carte in mano). Se non è stata selezionata nessuna posizione, mandare -1.
 
 Request body:
 ```
@@ -108,14 +112,14 @@ Response body:
 }
 ```
 
-Note: if the guess isn't correct, then the "complete_situation" field will be empty.
+Note: se la guess è sbagliata, il campo "complete_situation" non viene mandato.
 
-### __Get the match history for a user__
-URL: `/api/users/:userId/matches` (user must be logged-in)
+### __Ottieni la cronologia di match giocati da un utente__ 
+URL: `/api/users/:userId/matches` (protected by user authentication)
 
 HTTP Method: GET
 
-Description: get the matches of a user with the informations about the situations involved in.
+Description: per un utente, ottieni i match giocati con le relative informazioni sulle situazioni che sono comparse.
 
 Request boy: None
 
@@ -179,8 +183,6 @@ Response body:
 
 ## Main React Components
 
-Idea: pagina di new match in cui ho la funzione per fare fetch dal server delle carte iniziali sul click di inizio che poi passa con navigate queste carte alla pagina per giocare che le recupera con useLocation e le mette nello stato (volendo con useEffect ma non serve). A fine match viene mostrata la roba e posso poi con un tasto tornare alla pagina di rulings per iniziare una nuova partita.
-
 - `ListOfSomething` (in `List.js`): component purpose and main functionality
 - `GreatButton` (in `GreatButton.js`): component purpose and main functionality
 - ...
@@ -193,5 +195,5 @@ Idea: pagina di new match in cui ho la funzione per fare fetch dal server delle 
 
 ## Users Credentials
 
-- Luigi - luigi@gmail.com, pass: ciaociao
+- Luigi - luigi@gmail.com, pass: ciao25
 - Stu - stu@gmail.com, pass: stustu

@@ -6,7 +6,19 @@ import * as UserDAO from './dao/userDAO.mjs';
 
 async function main() {
   
-  //await SituationDAO.clearSituations();
+  await SituationDAO.clearSituations();
+  const sit1 = new Situation(0, "INDICE 1", 1, "img/sit1.png");
+  await SituationDAO.addSituation(sit1);
+  const sit2 = new Situation(1, "INDICE 5", 5, "img/sit2.png");
+  await SituationDAO.addSituation(sit2);
+  const sit3 = new Situation(2, "INDICE 10", 10, "img/sit3.png");
+  await SituationDAO.addSituation(sit3);
+  const sit4 = new Situation(3, "INDICE 15", 15, "img/sit4.png");
+  await SituationDAO.addSituation(sit4);
+  const sit5 = new Situation(4, "INDICE 20", 20, "img/sit5.png");
+  await SituationDAO.addSituation(sit5);
+  const sit6 = new Situation(5, "INDICE 25", 25, "img/sit6.png");
+  await SituationDAO.addSituation(sit6);
   /*
   const sit1 = new Situation(0, "Dimentichi il caricabatterie del telefono in hotel", 2.5, "img/sit1.png");
   await SituationDAO.addSituation(sit1);
@@ -110,10 +122,11 @@ async function main() {
   await SituationDAO.addSituation(sit50);
   */
 
-  // password: ciaociao
-  await UserDAO.addUser("Luigi", "luigi@gmail.com", "0b4d39f2c97512c307f2521da87645a805931ea9071e98752b23a9c8141d1757d0844d4fe230acee5373c55ebacd3fa9fd73b071e658132faeaf7a49e0d3028b", "894e4736cbbaf01a");
+  //await UserDAO.clearUsers();
+  // password: ciao25
+  //await UserDAO.addUser("Luigi", "luigi@gmail.com", "29820ff3d0dbdbeddaa656a90725a7fb8df0f4579954a4cb25d3565ca45cdc4e", "a33a51ce8fb17672");
   // password: stustu
-  await UserDAO.addUser("Stu", "stu@gmail.com", "270a06d3af1d623f3282130cbad4e5d06beedd9ea79136834e6780687ed95d61458e6d750283759e9870e77961b89ccb4c623dc22a2a05eba582e4c11db44673", "62586d92d9481e3d");
+  //await UserDAO.addUser("Stu", "stu@gmail.com", "7d3e0485d1517800ac701a1c02e837d3834ba01ed343a37433f97466f4e596a9", "d7acb7d6a5ff1c2f");
 
   db.close();
 }

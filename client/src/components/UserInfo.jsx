@@ -9,7 +9,7 @@ function UserProfile({user}) {
   // fetch i match dell'utente al mount
   useEffect(() => {
     const getMatches = async () => {
-      const matches = await API.getMatchHistory(user.user_id);
+      const matches = await API.getMatchHistory(user.id);
       setMatches(matches);
     };
     getMatches();

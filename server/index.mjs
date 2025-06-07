@@ -5,11 +5,17 @@ import cors from 'cors';
 import { check, validationResult } from 'express-validator';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dayjs from 'dayjs';
+
+// passport imports
+import passport from 'passport';
+import LocalStrategy from 'passport-local';
+import session from 'express-session';
 
 // local imports
 import * as MatchDAO from './dao/matchDAO.mjs';
 import * as SituationDAO from './dao/situationDAO.mjs';
-import dayjs from 'dayjs';
+import { getUser } from './dao/userDAO.mjs';
 
 // init express
 const app = new express();
@@ -24,18 +30,18 @@ const __dirname = path.dirname(__filename);
 app.use('/img', express.static(path.join(__dirname, '..', 'img')));
 */
 
-// set up and enable CORS
-const corsOption = {
+// set up e attivazione CORS
+const corsOptions = {
     // il server accetta richieste solo da qui
     origin: 'http://localhost:5173',
     optionsSuccessStatus: 200,
     // permette l'invio di cookies tra domini diversi e l'uso di 
     // Authorization headers se presenti
-    /*credentials: true*/
+    credentials: true
 };
 // applica il middlewere CORS a tutte le routes del server
-app.use(cors(corsOption));
-/*
+app.use(cors(corsOptions));
+
 // Set up Passport
 // - utilizzo della local strategy ceh sfrutta username e password
 // - verify è una callback di verifica chiamata con username e
@@ -80,7 +86,6 @@ app.use(session({
 // altrimenti Passport non ricorda l'utente tra una
 // richiesta e l'altra
 app.use(passport.authenticate('session'));
-*/
 
 /*** Utils ***/
 function getRandomObjects(array, n) {
@@ -113,7 +118,7 @@ function checkCardOrder(position, misfortune_index, hand) {
 }
 
 /*** ROUTES ***/
-// POST /api/matches/new - Starting a match
+// POST /api/matches/new
 app.post('/api/matches/new', [
     check('demo').isString().isIn(['Yes', 'No'])
   ], async (req, res) => {
@@ -122,8 +127,7 @@ app.post('/api/matches/new', [
       return res.status(422).json({errors: validationErrors.array()});
     }
 
-    //const user_id = req.body.demo === 'No' ? req.session.user.id : null;
-    const user_id = 1; // MOMENTANEO PER TESTING PRIMA DI PASSPORT
+    const user_id = req.body.demo === 'No' ? req.user.id : null;
     try {
       const match_id = await MatchDAO.addMatch(user_id);
       const allSituations = await SituationDAO.getAllSituations();
@@ -160,14 +164,16 @@ app.post('/api/matches/new', [
   }
 )
 
-// GET /api/matches/<matchId>/situation - Get a new situation for a match
+// GET /api/matches/<matchId>/situation
 app.get('/api/matches/:matchId/situation',
+  isLoggedIn,
   async (req, res) => {
     const match_id = parseInt(req.params.matchId);
     const matchExistance = await MatchDAO.getMatch(match_id);
     if (matchExistance.error) {
       return res.status(404).json(matchExistance);
     }
+
     try {
       const situations = await SituationDAO.getUnseenSituations(match_id);
       const situation = getRandomObjects(situations, 1)[0];
@@ -187,7 +193,7 @@ app.get('/api/matches/:matchId/situation',
   }
 )
 
-// POST /api/matches/<matchId>/guess - Guess card position
+// POST /api/matches/<matchId>/guess
 app.post('/api/matches/:matchId/guess', [
     check('match_id').isInt(),
     check('guessed_situation_id').isInt(),
@@ -204,7 +210,8 @@ app.post('/api/matches/:matchId/guess', [
     if (matchExistance.error) {
       return res.status(404).json(matchExistance);
     }
-    
+
+    let demo = matchExistance.user_id === null;
     try {
       const end_timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
       const {true_situation_id, start_timestamp} = await MatchDAO.getGuessStartingTime(match_id);
@@ -223,8 +230,7 @@ app.post('/api/matches/:matchId/guess', [
       const hand = req.body.match_situations;
 
       let responseData = {
-        match_state: 'in_progress',
-        complete_situation: {}
+        match_state: 'in_progress'
       }
       if (guessedPosition >=0 && checkCardOrder(guessedPosition, guessedSituation.misfortune_index, hand)) {
         // carta vinta
@@ -236,22 +242,23 @@ app.post('/api/matches/:matchId/guess', [
         };
         await MatchDAO.updateSituationInMatch(guessedSituation.id, match_id, 'Won');
         responseData.guess_result = 'correct';
-        if (await MatchDAO.getWonSituations(match_id) === 6) {
+        if (await MatchDAO.getWonSituations(match_id) === 6 || demo) {
           // match vinto
-          await MatchDAO.endMatch(match_id, 'Won');
+          !demo && await MatchDAO.endMatch(match_id, 'Won');
           responseData.match_state = 'won';
         }
       } else {
         // carta persa
         await MatchDAO.updateSituationInMatch(guessedSituation.id, match_id, 'Lost');
         responseData.guess_result = 'wrong';
-        if (await MatchDAO.getLostSituations(match_id) === 3) {
+        if (await MatchDAO.getLostSituations(match_id) === 3 || demo) {
           // match perso
-          await MatchDAO.endMatch(match_id, 'Lost');
+          !demo && await MatchDAO.endMatch(match_id, 'Lost');
           responseData.match_state = 'lost';
         }
       }
 
+      console.log(responseData);
       res.status(201).json(responseData);
     } catch (error) {
       res.status(503).end();
@@ -259,8 +266,9 @@ app.post('/api/matches/:matchId/guess', [
   }
 )
 
-// GET /api/users/<userId>/matches - Get the match history for a user
+// GET /api/users/<userId>/matches
 app.get('/api/users/:userId/matches', 
+  isLoggedIn,
   async (req, res) => {
     const userId = parseInt(req.params.userId);
 
@@ -294,7 +302,6 @@ app.get('/api/users/:userId/matches',
   }
 );
 
-/*
 // POST /api/sessions - Login of the user, returns the user data to the client
 app.post('/api/sessions', function(req, res, next) {
   passport.authenticate('local', (err, user, info) => {
@@ -312,7 +319,7 @@ app.post('/api/sessions', function(req, res, next) {
         // req.user contains the authenticated user, we send all the user info back
         return res.status(201).json(req.user);
       });
-  })(req, res, next);
+  }) (req, res, next);
 });
 
 // GET /api/sessions/current - Checks if there's an active session (the user is logged)
@@ -329,7 +336,6 @@ app.delete('/api/sessions/current', (req, res) => {
     res.end();
   });
 });
-*/
 
 // activate the server
 app.listen(port, () => {

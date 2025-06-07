@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'
-import { Routes, Route } from 'react-router'
+import { Routes, Route, Navigate, useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import DefaultLayout from './components/DefaultLayout.jsx'
 import MatchGameplay from './components/MatchGameplay.jsx'
@@ -10,19 +10,14 @@ import { LoginForm } from './components/AuthComponents'
 import UserProfile from './components/UserInfo.jsx'
 import HomeMenu from './components/Home.jsx'
 import NotFound from './components/NotFound.jsx'
-
-const fakeUser={
-  user_id: 1,
-  name: "Mario Rossi"
-}
+import API from './API.mjs';
 
 function App() {
-  const [user, setUser] = useState(fakeUser);
+  const [user, setUser] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    /*
     const checkAuth = async () => {
       const user = await API.getUserInfo();
       // se l'utente non è loggato viene tornato 401
@@ -31,31 +26,24 @@ function App() {
       setUser(user);
     };
     checkAuth();
-    */
   }, []);
   
-
   const handleLogin = async (credentials) => {
-    /*
     try {
       const user = await API.logIn(credentials);
       setLoggedIn(true);
-      setMessage({msg: `Welcome, ${user.name}!`, type: 'success'});
+      setMessage({msg: `Benvenuto, ${user.name}!`, type: 'success'});
       setUser(user);
     } catch(err) {
       setMessage({msg: err, type: 'danger'});
     }
-    */
   };
 
   const handleLogout = async () => {
-    /*
     await API.logOut();
     setLoggedIn(false);
     setMessage('');
     setUser('');
-    navigate("/");
-    */
   };
 
   return (
@@ -67,7 +55,7 @@ function App() {
         <Route path='/match/:matchId/play' element={<MatchGameplay/>}/>
         <Route path='/match/:matchId/end' element={<MatchEnd/>}/>
         <Route path='*' element={<NotFound/>}/>
-        {/*<Route path='/login' element={loggedIn ? <Navigate replace to='/'/> : <LoginForm login={handleLogin}/>}/>*/}
+        <Route path='/login' element={loggedIn ? <Navigate replace to='/'/> : <LoginForm login={handleLogin}/>}/>
       </Route>
     </Routes>    
   )

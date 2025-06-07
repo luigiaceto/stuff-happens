@@ -37,11 +37,9 @@ function MatchGameplay() {
 
     let guess_message = {type: 'success', msg: 'Hai indovinato la posizione!'};
     if (guessResult.guess_result === 'correct') {
-      setHandCards(prevHand => {
-        const newHand = [...prevHand, guessResult.complete_situation];
-        newHand.sort((a, b) => a.misfortune_index - b.misfortune_index);
-        return newHand;
-      });
+      let updatedHandCards = [...handCards, guessResult.complete_situation];
+      updatedHandCards.sort((a, b) => a.misfortune_index - b.misfortune_index);
+      setHandCards(updatedHandCards);
     } else {
       guess_message = {type: 'danger', msg: 'Hai sbagliato la posizione!'};
       setLostCards(prev => prev + 1);

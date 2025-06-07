@@ -22,3 +22,6 @@
 Per la scelta della posizione si può pensare che date n carte ho (n-1)+2 posizioni possibili dunque possso fare un semplice selettore che mi fa selezionale dalla posizione 1 a n+1. Nel server quindi posso ciclare sulla lista di carte e vedere in quella posizione è effettivamente ordinata bene.
 
 `fine match` avviene nella stessa POST dell'n-simo round quando il client ha indovinato la 6a carta oppure quando è la 3a carta che sbaglia. Nella risposta viene passato un campo opzionale che indica l'esito del match concluso. In caso di partita terminata quindi il server salva tutte le info di questa come entry "serializzando" le carte in una stringa da salvare nella tabella match.
+
+React:
+Idea -> pagina di new match in cui ho la funzione per fare fetch dal server delle carte iniziali sul click di inizio che poi passa con navigate queste carte alla pagina per giocare che le recupera con useLocation e le mette nello stato (volendo con useEffect ma non serve). A fine match viene mostrata la roba e posso poi con un tasto tornare alla pagina di rulings per iniziare una nuova partita.
