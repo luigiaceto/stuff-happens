@@ -51,26 +51,6 @@ Response body:
 }
 ```
 
-### __Ottieni una nuova situazione da indovinare__
-URL: `/api/matches/:matchId/situation` (protected by user authentication)
-
-HTTP Method: GET
-
-Description: ottieni una nuova carta dal mazzo da indovinare.
-
-Request body: None
-
-Response: `200 Ok` (success), `404 Not found` (wrong match_id), `500 Internal Server Error` (generic error).
-
-Response body:
-```
-{
-  "id": 1
-  "name": "Dimentichi il caricabatterie del telefono in hotel",
-  "img_path": "/img/sit1.jpg"
-}
-```
-
 ### __Indovina la posizione della carta sul tavolo__
 URL: `/api/matches/:matchId/guess`
 
@@ -113,6 +93,26 @@ Response body:
 ```
 
 Note: se la guess è sbagliata, il campo "complete_situation" non viene mandato.
+
+### __Ottieni una nuova situazione da indovinare__
+URL: `/api/matches/:matchId/situation` (protected by user authentication)
+
+HTTP Method: GET
+
+Description: ottieni una nuova carta dal mazzo da indovinare.
+
+Request body: None
+
+Response: `200 Ok` (success), `404 Not found` (wrong match_id), `500 Internal Server Error` (generic error).
+
+Response body:
+```
+{
+  "id": 1
+  "name": "Dimentichi il caricabatterie del telefono in hotel",
+  "img_path": "/img/sit1.jpg"
+}
+```
 
 ### __Ottieni la cronologia di match giocati da un utente__ 
 URL: `/api/users/:userId/matches` (protected by user authentication)

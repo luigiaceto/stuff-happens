@@ -18,7 +18,7 @@ import * as MatchDAO from './dao/matchDAO.mjs';
 import * as SituationDAO from './dao/situationDAO.mjs';
 import { getUser } from './dao/userDAO.mjs';
 
-// init express
+// inizializzazione express
 const app = new express();
 const port = 3001;
 app.use(express.json());
@@ -89,21 +89,6 @@ app.use(session({
 app.use(passport.authenticate('session'));
 
 /*** Utils ***/
-function getRandomObjectsA(array, n) {
-  const arrayCopy = [...array];
-  const result = [];
-    
-  for (let i = 0; i < n; i++) {
-    // Scelgo un indice casuale dall'array rimanente
-    const randomIndex = Math.floor(Math.random() * arrayCopy.length);
-    // Rimuovo l'elemento selezionato dall'array copia e lo aggiungo al risultato
-    const [selectedObject] = arrayCopy.splice(randomIndex, 1);
-    result.push(selectedObject);
-  }
-    
-  return result;
-}
-
 function getRandomObjects(array, n) {
   const arrayCopy = [...array];
   const result = [];
@@ -193,35 +178,6 @@ app.post('/api/matches/new', [
   }
 )
 
-// GET /api/matches/<matchId>/situation
-app.get('/api/matches/:matchId/situation',
-  isLoggedIn,
-  async (req, res) => {
-    const match_id = parseInt(req.params.matchId);
-    const matchExistance = await MatchDAO.getMatch(match_id);
-    if (matchExistance.error) {
-      return res.status(404).json(matchExistance);
-    }
-
-    try {
-      const situations = await SituationDAO.getUnseenSituations(match_id);
-      const situation = getRandomObjects(situations, 1)[0];
-      const round = await MatchDAO.incrementAndGetRound(match_id);
-      await MatchDAO.addSituationInMatch(situation.id, match_id, round, null);
-
-      const responseData = {
-        id: situation.id,
-        name: situation.name,
-        img_path: situation.img_path,
-      }
-
-      res.status(200).json(responseData);
-    } catch (error) {
-      res.status(500).end();
-    }
-  }
-)
-
 // POST /api/matches/<matchId>/guess
 app.post('/api/matches/:matchId/guess', [
     check('match_id').isInt(),
@@ -248,12 +204,13 @@ app.post('/api/matches/:matchId/guess', [
       console.log(true_situation_id, " ", start_timestamp, " ", end_timestamp);
 
       // verifico che siano effettivamente passati al massimo 30s + un delta, e che
-      // la situazione indovinata sia quella richiesta prima dal client
+      // la situazione indovinata sia quella richiesta prima dal client. Altri check
+      // per coprire eventuali tentativi di rottura del gioco
       if (dayjs(end_timestamp).diff(start_timestamp, 'second') > 31 ||
           req.body.guessed_situation_id !== true_situation_id || 
           req.body.match_situations.length > 5 ||
           req.body.guessed_position > req.body.match_situations.length) {
-        return res.status(422).json({error: 'Sospetto di cheating o tentativo di exploit, sei stato cacciato dalla partita :('});
+        return res.status(422).json({cheatError: 'Sospetto cheat'});
       }
       
       const guessedSituation = await SituationDAO.getSituationById(req.body.guessed_situation_id);
@@ -292,6 +249,35 @@ app.post('/api/matches/:matchId/guess', [
       res.status(201).json(responseData);
     } catch (error) {
       res.status(503).end();
+    }
+  }
+)
+
+// GET /api/matches/<matchId>/situation
+app.get('/api/matches/:matchId/situation',
+  isLoggedIn,
+  async (req, res) => {
+    const match_id = parseInt(req.params.matchId);
+    const matchExistance = await MatchDAO.getMatch(match_id);
+    if (matchExistance.error) {
+      return res.status(404).json(matchExistance);
+    }
+
+    try {
+      const situations = await SituationDAO.getUnseenSituations(match_id);
+      const situation = getRandomObjects(situations, 1)[0];
+      const round = await MatchDAO.incrementAndGetRound(match_id);
+      await MatchDAO.addSituationInMatch(situation.id, match_id, round, null);
+
+      const responseData = {
+        id: situation.id,
+        name: situation.name,
+        img_path: situation.img_path,
+      }
+
+      res.status(200).json(responseData);
+    } catch (error) {
+      res.status(500).end();
     }
   }
 )

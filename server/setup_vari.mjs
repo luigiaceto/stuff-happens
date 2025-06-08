@@ -20,6 +20,16 @@ async function main() {
   await SituationDAO.addSituation(sit5);
   const sit6 = new Situation(5, "INDICE 25", 25, "img/sit6.png");
   await SituationDAO.addSituation(sit6);
+  const sit7 = new Situation(6, "INDICE 30", 30, "img/sit7.png");
+  await SituationDAO.addSituation(sit7);
+  const sit8 = new Situation(7, "INDICE 35", 35, "img/sit8.png");
+  await SituationDAO.addSituation(sit8);
+  const sit9 = new Situation(8, "INDICE 40", 40, "img/sit9.png");
+  await SituationDAO.addSituation(sit9);
+  const sit10 = new Situation(9, "INDICE 45", 45, "img/sit10.png");
+  await SituationDAO.addSituation(sit10);
+  const sit11 = new Situation(10, "INDICE 50", 50, "img/sit11.png");
+  await SituationDAO.addSituation(sit11);
   /*
   const sit1 = new Situation(0, "Dimentichi il caricabatterie del telefono in hotel", 2.5, "img/sit1.png");
   await SituationDAO.addSituation(sit1);

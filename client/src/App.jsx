@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'
-import { Routes, Route, Navigate, useNavigate } from 'react-router'
+import { Routes, Route, Navigate } from 'react-router'
 import { useState, useEffect } from 'react'
 import DefaultLayout from './components/DefaultLayout.jsx'
 import MatchGameplay from './components/MatchGameplay.jsx'
@@ -54,8 +54,8 @@ function App() {
         <Route path='/match/new' element={<MatchRulings loggedIn={loggedIn}/>}/>
         <Route path='/match/:matchId/play' element={<MatchGameplay/>}/>
         <Route path='/match/:matchId/end' element={<MatchEnd/>}/>
-        <Route path='*' element={<NotFound/>}/>
         <Route path='/login' element={loggedIn ? <Navigate replace to='/'/> : <LoginForm login={handleLogin}/>}/>
+        <Route path='*' element={<NotFound/>}/>
       </Route>
     </Routes>    
   )

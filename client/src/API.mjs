@@ -15,9 +15,11 @@ const startMatch = async (demo) => {
     const matchInfoJson = await response.json();
     return matchInfoJson;
   } else if (response.status === 503) {
-    throw new Error('Service Unavailable');
+    return {error: 'Service Unavailable'};
   } else if (response.status === 422) {
-    throw new Error('Unprocessable Entity');
+    return {error: 'Unprocessable Entity'};
+  } else {
+    throw new Error('Unknown Error');
   }
 }
 
@@ -38,11 +40,13 @@ const guessPosition = async (match_id, guessed_situation_id, guessed_position, m
     const result = await response.json();
     return result;
   } else if (response.status === 404) {
-    throw new Error('Match Not Found');
+    return {error: 'Match Not Found'};
   } else if (response.status === 422) {
-    throw new Error('Unprocessable Entity');
+    return (result);
   } else if (response.status === 503) {
-    throw new Error('Service Unavailable');
+    return {error: 'Service Unavailable'};
+  } else {
+    throw new Error('Unknown Error');
   }
 }
 
@@ -58,9 +62,11 @@ const getNextSituation = async (match_id) => {
     const situation = await response.json();
     return situation;
   } else if (response.status === 404) {
-    throw new Error('Match Not Found');
+    return {error: 'Match Not Found'};
   } else if (response.status === 500) {
-    throw new Error('Internal Server Error');
+    return {error: 'Internal Server Error'};
+  } else {
+    throw new Error('Unknown Error');
   }
 }
 

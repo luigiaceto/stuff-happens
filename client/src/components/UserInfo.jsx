@@ -1,17 +1,20 @@
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { Container, Col, Card, Badge, Accordion } from 'react-bootstrap';
+import { Container, Col, Card, Badge, Accordion, Spinner } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import API from '../API.mjs';
 
 function UserProfile({user}) {
   const [matches, setMatches] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // fetch i match dell'utente al mount
   useEffect(() => {
     const getMatches = async () => {
       const matches = await API.getMatchHistory(user.id);
+      setLoading(false);
       setMatches(matches);
     };
+    setLoading(true);
     getMatches();
   }, []);
 
@@ -22,9 +25,14 @@ function UserProfile({user}) {
           <Card.Title className="fs-2">{user.name}</Card.Title>
         </Card.Body>
       </Card>
-      <Col md={12}>
-        <MatchList matches={matches}/>
-      </Col>
+      {!loading && 
+        <Col md={12}>
+          <MatchList matches={matches}/>
+        </Col>}
+      {loading &&
+        <div className="text-center">
+          <Spinner animation="border" variant="success"/>
+        </div>}
     </Container>
   );
 }

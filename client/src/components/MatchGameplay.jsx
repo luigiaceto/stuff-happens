@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { ProgressBar, Container, Row, Alert, Badge, Button, Card, Form, Col } from 'react-bootstrap';
+import { ProgressBar, Container, Row, Alert, Badge, Button, Card, Form, Col, Spinner } from 'react-bootstrap';
 import { Hand, SituationCard } from './Cards.jsx';
 import API from '../API.mjs';
 
@@ -11,6 +11,7 @@ function MatchGameplay() {
   const [message, setMessage] = useState('');
   const [lostCards, setLostCards] = useState(0);
   const [selectedPosition, setSelectedPosition] = useState(-1);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,14 +27,42 @@ function MatchGameplay() {
   const handleNextCard = async () => {
     setMessage('');
     setSelectedPosition(-1);
+    setLoading(true);
     const nextSituation = await API.getNextSituation(matchId);
+    setLoading(false);
+    if (nextSituation.error) {
+      navigate('/match/new', {
+        state: {
+          msg: 'Ops, il server ha riscontrato un errore. Riprova',
+          type: 'danger'
+        }
+      });
+    }
     setTableCard(nextSituation);
   }
 
   // gestisce il guess di una carta, viene chiamata allo scadere del 
   // timer o al click del pulsante
   const handleGuess = async () => {
+    setLoading(true);
     const guessResult = await API.guessPosition(matchId, tableCard.id, selectedPosition, handCards);
+    setLoading(false);
+
+    if (guessResult.error) {
+      navigate('/match/new', {
+        state: {
+          msg: 'Ops, il server ha riscontrato un errore. Riprova',
+          type: 'danger'
+        }
+      });
+    } else if (guessResult.cheatError) {
+      navigate('/match/new', {
+        state: {
+          msg: 'Ops, sembra tu stia cercando di imbrogliare o rompere il gioco. Riprova :)',
+          type: 'danger'
+        }
+      });
+    }
 
     let guess_message = {type: 'success', msg: 'Hai indovinato la posizione!'};
     // utilizzo una variabile aggiuntiva poichè nell'ultima guess il navigate parte
@@ -50,7 +79,7 @@ function MatchGameplay() {
       guess_message = {type: 'danger', msg: 'Hai sbagliato la posizione!'};
       setLostCards(prev => prev + 1);
     }
-    console.log(guessResult);
+    
     if (guessResult.match_state !== 'in_progress') {
       let end_message = {type: 'success', msg: 'Partita vinta!'};
       if (guessResult.match_state === 'lost') {
@@ -67,8 +96,16 @@ function MatchGameplay() {
     setMessage(guess_message);
   }
 
+  // si montano i componenti basandosi sia su loading che su message:
+  // - loading poichè l'utente deve sapere quando il server sta ancora rispondendo
+  // - message poichè non voglio mostrare certi componenti quando viene notificata
+  //   sullo schermo la correttezza o meno della guess
   return (
     <Container>
+      {message && 
+        <Row>
+          <Alert variant={message.type}>{message.msg}</Alert>
+        </Row>}
       <Row>
         <Col>
           <h2 className='ms-2'>
@@ -76,34 +113,34 @@ function MatchGameplay() {
           </h2>
         </Col>
         <Col className='mt-4'>
-          {!message && <CountdownTimer handleGuess={handleGuess}/>}
+          {!message && !loading &&
+            <CountdownTimer handleGuess={handleGuess}/>}
         </Col>
       </Row>
-      {message && 
-        <Row>
-          <Alert variant={message.type}>{message.msg}</Alert>
-        </Row>}
-      {!message && 
+      {!message && !loading &&
         <Alert variant="info" className="w-25 mx-auto mt-4">
           <SituationCard situation={tableCard}/>
         </Alert>}
-      {message &&
-        <div className="text-center">
-          <Button variant="success" size="lg" className="w-25 py-3 mb-3" onClick={handleNextCard}>
-            Prossima carta
-          </Button>
-        </div>}
       <Container className='mt-5'>
         <Hand situations={handCards}/>
-        {!message && 
+        {!message && !loading &&
           <GuessSelector 
             setMessage={setMessage} 
             handCards={handCards} 
             selectedPosition={selectedPosition} 
             setSelectedPosition={setSelectedPosition}
-            handleGuess={handleGuess}/>
-        }
+            handleGuess={handleGuess}/>}
       </Container>
+      {message && !loading &&
+        <div className="text-center mt-5">
+          <Button variant="success" size="lg" className="w-25 py-3 mb-3" onClick={handleNextCard}>
+            Prossima carta
+          </Button>
+        </div>}
+      {loading &&
+        <div className="text-center mt-5">
+          <Spinner animation="border" variant="success"/>
+        </div>}
     </Container>
   );
 }
@@ -121,14 +158,6 @@ const CountdownTimer = ({ handleGuess }) => {
 
     return () => clearInterval(intervalId);
   }, [running]);
-
-  /*
-  // Fa partire il timer al mount
-  useEffect(() => {
-    setElapsed(0);
-    setRunning(true);
-  }, []);
-  */
 
   useEffect(() => {
     if (elapsed >= 60 && running) {
