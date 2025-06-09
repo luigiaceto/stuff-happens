@@ -8,6 +8,8 @@ async function main() {
   await MatchDAO.clearMatches();
   await MatchDAO.clearSituationsInMatch();
   await SituationDAO.clearSituations();
+  
+  /*
   const sit1 = new Situation(0, "INDICE 1", 1, "img/sit1.png");
   await SituationDAO.addSituation(sit1);
   const sit2 = new Situation(1, "INDICE 5", 5, "img/sit2.png");
@@ -30,7 +32,8 @@ async function main() {
   await SituationDAO.addSituation(sit10);
   const sit11 = new Situation(10, "INDICE 50", 50, "img/sit11.png");
   await SituationDAO.addSituation(sit11);
-  /*
+  */
+  
   const sit1 = new Situation(0, "Dimentichi il caricabatterie del telefono in hotel", 2.5, "img/sit1.png");
   await SituationDAO.addSituation(sit1);
   const sit2 = new Situation(1, "Ti si rompe la cerniera della valigia appena arrivato", 5.0, "img/sit2.png");
@@ -131,7 +134,6 @@ async function main() {
   await SituationDAO.addSituation(sit49);
   const sit50 = new Situation(49, "Vieni rapito da pirati somali nell'Oceano Indiano", 100.0, "img/sit50.png");
   await SituationDAO.addSituation(sit50);
-  */
 
   //await UserDAO.clearUsers();
   // password: ciao25

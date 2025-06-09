@@ -1,3 +1,11 @@
 .default-layout {
   background-color: #f3f5e9;
 }
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.15); /* bianco semitrasparente */
+  border-radius: 16px;
+  backdrop-filter: blur(10px); /* effetto opaco */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}

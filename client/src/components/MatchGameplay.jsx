@@ -202,9 +202,9 @@ export function GuessSelector({handCards, selectedPosition, setSelectedPosition,
 
   return (
     <Container>
-      <Card className="mt-4">
+      <Card className="mt-4 glass-card">
         <Card.Body>
-          <Card.Title className="mb-4">Seleziona la posizione nella tua mano (da sinistra) in cui mettere la carta del tavolo</Card.Title>
+          <Card.Title className="mb-4" style={{color: '#32363d'}}>Seleziona la posizione nella tua mano (da sinistra) in cui mettere la carta del tavolo</Card.Title>
           <Form>
             <Form.Group className="mb-3">
               <Form.Select value={selectedPosition} onChange={handlePositionChange}>

@@ -2,6 +2,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { Container, Col, Card, Badge, Accordion, Spinner } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import API from '../API.mjs';
+import GradientText from './reactbits_components/Gradienttext.jsx';
 
 function UserProfile({user}) {
   const [matches, setMatches] = useState([]);
@@ -22,7 +23,16 @@ function UserProfile({user}) {
     <Container>
       <Card className="mb-4 text-center">
         <Card.Body>
-          <Card.Title className="fs-2">{user.name}</Card.Title>
+          <Card.Title className="fs-1">
+            <GradientText
+              colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
+              animationSpeed={3}
+              showBorder={false}
+              className="custom-class"
+            >
+              {user.name}
+            </GradientText>
+          </Card.Title>
         </Card.Body>
       </Card>
       {!loading && 
