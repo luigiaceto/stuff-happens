@@ -9,8 +9,8 @@
 - Route `/match/new`: pagina con regole del gioco, permette di iniziare effettivamente una partita (demo o non demo)
 - Route `/match/:matchId/play`: pagina in cui viene giocata la partita con id nel DB pari a matchId
 - Route `/match/:matchId/end`: pagina su cui si viene rediretti dopo la fine della partita con id nel DB pari a matchId
-- Route `/login`: pagina per eseguire il login di un utente
-- Route `*`: pagina che rappresenta una route a cui non è associata nessuna pagina. Quando si inserisce nell'URL una route non uguale a quelle appena elencate si viene rediretti a '*'
+- Route `/login`: pagina per eseguire il login di un utente riempendo dei campi
+- Route `*`: pagina che rappresenta una route a cui non è associata nessuna pagina. Quando si inserisce nell'URL una route non uguale a una di quelle appena elencate si viene rediretti a '*'
 
 ## API Server
 
@@ -101,7 +101,7 @@ HTTP Method: GET
 
 Description: ottieni una nuova carta dal mazzo da indovinare.
 
-Request body: None
+Request body: Nessuno
 
 Response: `200 Ok` (success), `404 Not found` (wrong match_id), `500 Internal Server Error` (generic error).
 
@@ -121,7 +121,7 @@ HTTP Method: GET
 
 Description: per un utente, ottieni i match giocati con le relative informazioni sulle situazioni che sono comparse.
 
-Request boy: None
+Request body: Nessuno
 
 Response: `200 Ok` (success), `500 Internal Server Error`.
 
@@ -130,7 +130,7 @@ Response body:
 [
   {
     "match_id": 1234,
-    "match_result": "Win"/"Lose",
+    "match_result": "Vittoria"/"Sconfitta",
     "card_collected": 4,
     "date": "2025-05-23",
     "match_situations": [
@@ -138,7 +138,7 @@ Response body:
         "id": 1
         "name": "Dimentichi il caricabatterie del telefono in hotel",
         "round": 2,
-        "result": "Won"/"Lost"
+        "result": "Vinta"/"Persa"
       },
       ...
     ]
@@ -146,6 +146,60 @@ Response body:
   ...
 ]
 ```
+
+### __Login utente__
+URL: `/api/sessions`
+
+HTTP Method: POST
+
+Description: permette ad un utente di effettuare il login. Si crea una sessione
+che permette al server di reperire l'id utente senza mandarlo nel body delle 
+richieste e il client potrà avere accesso alle routes protette da autenticazione.
+
+Request body: 
+```
+
+```
+
+Response:
+
+
+Response body:
+```
+
+```
+
+
+### __Check sessione attiva__
+URL: `/api/sessions/current`
+
+HTTP Method: POST
+
+Description: permette il controllo di sessione per vedere se l'utente
+è loggato.
+
+Request body: None
+
+Response:
+
+
+Response body:
+```
+
+```
+
+### __Logout utente__
+URL: `/api/sessions/current`
+
+HTTP Method: DELETE
+
+Description: permette ad un utente loggato di eseguire il logout
+
+Request body: Nessuno
+
+Response: `200 Ok` (success), `500 Internal Server Error`.
+
+Response body: Nessuno
 
 ## Database Tables
 
@@ -183,11 +237,16 @@ Response body:
 
 ## Main React Components
 
-- `ListOfSomething` (in `List.js`): component purpose and main functionality
-- `GreatButton` (in `GreatButton.js`): component purpose and main functionality
-- ...
-
-(only _main_ components, minor ones may be skipped)
+- `LoginForm` in *AuthComponents.jsx* -> form che permette il login dell'utente
+- `Hand` in *Cards.jsx* -> renderizza un gruppo di carte (situazioni), usato sia per renderizzare la mano che le carte a fine partita
+- `DefaultLayout` in *DefaultLayout.jsx* -> renderizza il default layout dell'app che comprende la navbar, messaggio di benvenuto e il footer
+- `HomeMenu` in *Home.jsx* -> renderizza la pagina home dell'app, contiene il tasto per spostarsi nella pagina di rulings e qualche scritta 
+- `MatchEnd` in *MatchEnd.jsx* -> renderizza la pagina di fine match con carte collezionate e messaggio di vittoria/sconfitta, nonchè tasto per giocare una nuova partita
+- `MatchGameplay` in *MatchGameplay.jsx* -> renderizza la partita vera e propria che comprende timer, selettore della posizione, mano e carta sul tavolo nonchè messaggi che avvisano sul risultato della guess
+- `MatchRulings` in *MatchRulings.jsx* -> renderizza la pagina per iniziare effettivamente una partita. Comprende il regolamento e il tasto per iniziare un match (demo o non)
+- `NavHeader` in *NavHeader.jsx* -> renderizza il navigation header dell'app, comprende il tasto per andare in home, quello per andare sul profilo utente e quello per accedere alla pagina in cui effettuare il login
+- `NotFound` in *NotFound.jsx* -> renderizza la semplice pagina 404 quando si inserisce una route non esistente dell'applicazione come URL
+- `UserProfile` in *UserInfo.jsx* -> renderizza la pagina del profilo utente, ci si può accedere solo se loggati e mostra il nome utente insieme ad una lista ad espansione delle partite giocate ordinate cronologicamente
 
 ## Screenshot
 

@@ -19,7 +19,7 @@ function LoginForm(props) {
       <Col md={6}>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId='username' className='mb-3'>
-              <Form.Label>email</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control type='email' value={username} onChange={ev => setUsername(ev.target.value)} required={true} />
           </Form.Group>
 

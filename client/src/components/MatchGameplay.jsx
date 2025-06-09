@@ -48,6 +48,9 @@ function MatchGameplay() {
     const guessResult = await API.guessPosition(matchId, tableCard.id, selectedPosition, handCards);
     setLoading(false);
 
+    // non inserendo return dopo questi navigate allora
+    // il navigate di fine partita sovrascrive quelli prima
+    // che si attiva anche nel caso di errore del server
     if (guessResult.error) {
       navigate('/match/new', {
         state: {
@@ -55,13 +58,16 @@ function MatchGameplay() {
           type: 'danger'
         }
       });
+      return;
     } else if (guessResult.cheatError) {
+      console.log(guessResult);
       navigate('/match/new', {
         state: {
           msg: 'Ops, sembra tu stia cercando di imbrogliare o rompere il gioco. Riprova :)',
           type: 'danger'
         }
       });
+      return;
     }
 
     let guess_message = {type: 'success', msg: 'Hai indovinato la posizione!'};

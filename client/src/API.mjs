@@ -42,6 +42,7 @@ const guessPosition = async (match_id, guessed_situation_id, guessed_position, m
   } else if (response.status === 404) {
     return {error: 'Match Not Found'};
   } else if (response.status === 422) {
+    const result = await response.json();
     return (result);
   } else if (response.status === 503) {
     return {error: 'Service Unavailable'};

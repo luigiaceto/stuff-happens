@@ -58,7 +58,7 @@ function Match({match}) {
           <span>Carte collezionate: {match.card_collected}</span>
         </Col>
         <Col className="text-end me-4">
-          <Badge bg={match.match_result === 'Won' ? 'success' : 'danger'}>
+          <Badge bg={match.match_result === 'Vittoria' ? 'success' : 'danger'}>
             {match.match_result}
           </Badge>
         </Col> 
@@ -71,10 +71,11 @@ function Match({match}) {
             <Card.Body className="d-flex flex-row justify-content-between align-items-center">
               <Card.Title>{situation.name}</Card.Title>
               <Card.Text>
-                Round: {situation.round === 0 ? 'Mano iniziale' : situation.round}
-                <Badge className='ms-4' bg={situation.result === 'Won' ? 'success' : 'danger'}>
-                  {situation.result}
-                </Badge>
+                {situation.round === 0 ? 'Mano iniziale' : `Round: ${situation.round}`}
+                {situation.round > 0 &&
+                  <Badge className='ms-4' bg={situation.result === 'Vinta' ? 'success' : 'danger'}>
+                    {situation.result}
+                  </Badge>}
               </Card.Text>
             </Card.Body>
           </Card>

@@ -51,7 +51,7 @@ passport.use(new LocalStrategy(async function verify(username, password, cb) {
   // retrieve dell'user per vedere se esiste
   const user = await getUser(username, password);
   if(!user)
-    return cb(null, false, 'Incorrect username or password.');
+    return cb(null, false, 'Username o password errati');
   // se l'utente è valido
   return cb(null, user);
 }));
@@ -150,7 +150,7 @@ app.post('/api/matches/new', [
       const tableSituation = someSituations[3];
 
       await Promise.all(startingHand.map(situation => 
-        MatchDAO.addSituationInMatch(situation.id, match_id, 0, 'Won'))
+        MatchDAO.addSituationInMatch(situation.id, match_id, 0, 'Vinta'))
       );
       
       // null poichè devo aspettare la risposta del client per l'esito del guess
@@ -228,20 +228,20 @@ app.post('/api/matches/:matchId/guess', [
           misfortune_index: guessedSituation.misfortune_index,
           img_path: guessedSituation.img_path
         };
-        await MatchDAO.updateSituationInMatch(guessedSituation.id, match_id, 'Won');
+        await MatchDAO.updateSituationInMatch(guessedSituation.id, match_id, 'Vinta');
         responseData.guess_result = 'correct';
         if (await MatchDAO.getWonSituations(match_id) === 6 || demo) {
           // match vinto
-          !demo && await MatchDAO.endMatch(match_id, 'Won');
+          !demo && await MatchDAO.endMatch(match_id, 'Vittoria');
           responseData.match_state = 'won';
         }
       } else {
         // carta persa
-        await MatchDAO.updateSituationInMatch(guessedSituation.id, match_id, 'Lost');
+        await MatchDAO.updateSituationInMatch(guessedSituation.id, match_id, 'Persa');
         responseData.guess_result = 'wrong';
         if (await MatchDAO.getLostSituations(match_id) === 3 || demo) {
           // match perso
-          !demo && await MatchDAO.endMatch(match_id, 'Lost');
+          !demo && await MatchDAO.endMatch(match_id, 'Sconfitta');
           responseData.match_state = 'lost';
         }
       }
@@ -300,7 +300,7 @@ app.get('/api/users/:userId/matches',
             round: situation.round,
             result: situation.result
           }));
-          const collected_cards = situations.filter(s => s.result === 'Won').length;
+          const collected_cards = situations.filter(s => s.result === 'Vinta').length;
           return {
             match_id: match.id,
             match_result: match.result,

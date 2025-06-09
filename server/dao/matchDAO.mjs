@@ -100,7 +100,7 @@ export const getWonSituations = (matchId) => {
     const sql = `
       SELECT COUNT(*) as count
       FROM situation_in_match 
-      WHERE match_id = ? AND result = 'Won'
+      WHERE match_id = ? AND result = 'Vinta'
     `;
     db.get(sql, [matchId], (err, row) => {
       if (err) {
@@ -117,7 +117,7 @@ export const getLostSituations = (matchId) => {
     const sql = `
       SELECT COUNT(*) as count
       FROM situation_in_match 
-      WHERE match_id = ? AND result = 'Lost'
+      WHERE match_id = ? AND result = 'Persa'
     `;
     db.get(sql, [matchId], (err, row) => {
       if (err) {
