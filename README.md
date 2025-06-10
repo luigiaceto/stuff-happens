@@ -254,5 +254,5 @@ Response body: Nessuno
 
 ## Users Credentials
 
-- Luigi - luigi@gmail.com, pass: ciao25
-- Stu - stu@gmail.com, pass: stustu
+- Sebulba - sebulba@gmail.com, pass: ciao25
+- Luigi - luigi@gmail.com, pass: stustu

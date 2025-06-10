@@ -1,10 +1,10 @@
 import db from "../db.mjs";
 import crypto from 'crypto';
 
-export const addUser = (name, email, password, salt) => {
+export const addUser = (name, email, password, salt, profile_pic) => {
   return new Promise((resolve, reject) => {
-    const sql = "INSERT INTO user(name, email, password, salt) VALUES(?, ?, ?, ?)";
-    db.run(sql, [name, email, password, salt], function(err) {
+    const sql = "INSERT INTO user(name, email, password, salt, profile_pic) VALUES(?, ?, ?, ?, ?)";
+    db.run(sql, [name, email, password, salt, profile_pic], function(err) {
       if (err) {
         reject(err);
       } else {
@@ -38,7 +38,7 @@ export const getUser = (email, password) => {
         resolve(false); 
       }
       else {
-        const user = {id: row.id, email: row.email, name: row.name};
+        const user = {id: row.id, email: row.email, name: row.name, profile_pic: row.profile_pic};
         
         crypto.scrypt(password, row.salt, 32, function(err, hashedPassword) {
           if (err) reject(err);
@@ -65,7 +65,7 @@ export const getUserById = (id) => {
         resolve({error: 'User not found!'}); 
       }
       else {
-        const user = {id: row.user_id, username: row.email, name: row.name};
+        const user = {id: row.user_id, username: row.email, name: row.name, profile_pic: row.profile_pic};
         resolve(user);
       }
     });

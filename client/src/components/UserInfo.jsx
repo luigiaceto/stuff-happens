@@ -1,5 +1,5 @@
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { Container, Col, Card, Badge, Accordion, Spinner } from 'react-bootstrap';
+import { Container, Col, Card, Badge, Accordion, Spinner, Row } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import API from '../API.mjs';
 import GradientText from './reactbits_components/Gradienttext.jsx';
@@ -24,14 +24,27 @@ function UserProfile({user}) {
       <Card className="mb-4 text-center">
         <Card.Body>
           <Card.Title className="fs-1">
-            <GradientText
-              colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
-              animationSpeed={3}
-              showBorder={false}
-              className="custom-class"
-            >
-              {user.name}
-            </GradientText>
+            <Row className="align-items-center justify-content-center g-0">
+              <Col xs="auto" className="d-flex align-items-center">
+                <img
+                  src={`http://localhost:3001${user.profile_pic}`}
+                  className="rounded-circle me-3"
+                  style={{
+                    width: '100px',
+                    height: '100px',
+                    objectFit: 'cover',
+                  }}
+                />
+                <GradientText
+                  colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
+                  animationSpeed={3}
+                  showBorder={false}
+                  className="custom-class"
+                >
+                  {user.name}
+                </GradientText>
+              </Col>
+            </Row>
           </Card.Title>
         </Card.Body>
       </Card>

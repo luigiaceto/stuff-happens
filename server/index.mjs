@@ -23,13 +23,7 @@ const app = new express();
 const port = 3001;
 app.use(express.json());
 app.use(morgan('dev'));
-
-/*
-// expose img folder 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use('/img', express.static(path.join(__dirname, '..', 'img')));
-*/
+app.use(express.static('public'));
 
 // set up e attivazione CORS
 const corsOptions = {
