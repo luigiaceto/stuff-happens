@@ -26,7 +26,7 @@ function HomeMenu() {
           </p>
           <Row className="justify-content-center">
             <Col md={6} lg={4}>
-              <Button variant="success" size="lg" className="w-100 py-3 mb-3" as={Link} to={`/match/new`}>
+              <Button variant="success" size="lg" className="w-100 py-3 mb-3 basic-shadow" as={Link} to={`/match/new`}>
                 Gioca una partita
               </Button>
             </Col>

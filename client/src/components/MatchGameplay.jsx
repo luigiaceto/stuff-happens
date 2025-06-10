@@ -139,7 +139,7 @@ function MatchGameplay() {
       </Container>
       {message && !loading &&
         <div className="text-center mt-5">
-          <Button variant="success" size="lg" className="w-25 py-3 mb-3" onClick={handleNextCard}>
+          <Button variant="success" size="lg" className="w-25 py-3 mb-3 basic-shadow" onClick={handleNextCard}>
             Prossima carta
           </Button>
         </div>}

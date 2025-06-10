@@ -76,7 +76,7 @@ function MatchStart({loggedIn}) {
             threshold={0.2}
             delay={0.1}
           >
-            <Button variant="success" size="lg" className="w-25 py-3 mb-3 mt-5 mx-auto" onClick={handleBegin}>
+            <Button variant="success" size="lg" className="w-25 py-3 mb-3 mt-5 mx-auto basic-shadow" onClick={handleBegin}>
               Inizia
             </Button>
           </AnimatedContent>}

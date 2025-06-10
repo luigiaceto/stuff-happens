@@ -21,7 +21,7 @@ function UserProfile({user}) {
 
   return (
     <Container>
-      <Card className="mb-4 text-center">
+      <Card className="mb-4 text-center glass-card">
         <Card.Body>
           <Card.Title className="fs-1">
             <Row className="align-items-center justify-content-center g-0">
@@ -49,7 +49,7 @@ function UserProfile({user}) {
         </Card.Body>
       </Card>
       {!loading && 
-        <Col md={12}>
+        <Col md={12} className="basic-shadow">
           <MatchList matches={matches}/>
         </Col>}
       {loading &&

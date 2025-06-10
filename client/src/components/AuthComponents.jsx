@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button, Row, Col, Card, Container } from 'react-bootstrap';
 import { Link } from 'react-router';
+import AnimatedContent from './reactbits_components/AnimatedContent.jsx';
 
 function LoginForm(props) {
   const [username, setUsername] = useState('');
@@ -15,24 +16,34 @@ function LoginForm(props) {
   };
 
   return (
-    <Row>
-      <Col md={6}>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId='username' className='mb-3'>
-              <Form.Label>Email</Form.Label>
-              <Form.Control type='email' value={username} onChange={ev => setUsername(ev.target.value)} required={true} />
-          </Form.Group>
-
-          <Form.Group controlId='password' className='mb-3'>
-              <Form.Label>Password</Form.Label>
-              <Form.Control type='password' value={password} onChange={ev => setPassword(ev.target.value)} required={true} minLength={6}/>
-          </Form.Group>
-
-          <Button type='submit'>Login</Button>
-          <Link className='btn btn-danger mx-2 my-2' to={'/'} >Cancel</Link>
-      </Form>
-    </Col>
-  </Row>
+    <AnimatedContent
+      distance={150} 
+      direction="vertical"
+      reverse={false}
+      duration={1}
+      ease="power3.out"
+      threshold={0.2}
+      delay={0.1}
+    >
+      <Container className='d-flex justify-content-center align-items-start glass-card text-center w-25'>
+        <Row>
+          <Col>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group controlId='username' className='mb-3 mt-3'>
+                <Form.Label>Email</Form.Label>
+                <Form.Control type='email' value={username} onChange={ev => setUsername(ev.target.value)} required={true} />
+              </Form.Group>
+              <Form.Group controlId='password' className='mb-3'>
+                <Form.Label>Password</Form.Label>
+                <Form.Control type='password' value={password} onChange={ev => setPassword(ev.target.value)} required={true} minLength={6}/>
+              </Form.Group>
+              <Button type='submit' className='mb-4 me-3'>Login</Button>
+              <Link className='btn btn-danger mb-4' to={'/'} >Cancel</Link>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
+    </AnimatedContent>
   )
 };
 
