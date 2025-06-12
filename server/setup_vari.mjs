@@ -80,7 +80,7 @@ async function main() {
   await SituationDAO.addSituation(sit22);
   const sit23 = new Situation(22, "Ti intossichi con il cibo locale e finisci in ospedale", 47.5, "/img/intossicato.jpg");
   await SituationDAO.addSituation(sit23);
-  const sit24 = new Situation(23, "Ti rubano il portafoglio in metro", 48.0, "img/portafoglio.jpg");
+  const sit24 = new Situation(23, "Ti rubano il portafoglio in metro", 48.0, "/img/portafoglio.jpg");
   await SituationDAO.addSituation(sit24);
   const sit25 = new Situation(24, "Scopri che il tuo passaporto è scaduto all'aeroporto", 50.0, "/img/passaporto.jpg");
   await SituationDAO.addSituation(sit25);

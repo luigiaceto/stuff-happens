@@ -91,6 +91,9 @@ function MatchGameplay() {
       if (guessResult.match_state === 'lost') {
         end_message = {type: 'danger', msg: 'Partita persa!'};
       }
+      // per l'ultimo round non serve mostrare il risultato della guess:
+      // - se la partita è vinta, allora l'ultima carta è stata indovinata
+      // - se la partita è persa, allora l'ultima carta non è stata indovinata
       navigate(`/match/${matchId}/end`, {
         state: {
           collected_situations: updatedHandCards,
