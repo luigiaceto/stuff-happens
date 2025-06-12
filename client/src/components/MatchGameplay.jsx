@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { ProgressBar, Container, Row, Alert, Badge, Button, Card, Form, Col, Spinner } from 'react-bootstrap';
-import { Hand, SituationCard } from './Cards.jsx';
+import { GuessHand, Hand, SituationCard } from './Cards.jsx';
 import API from '../API.mjs';
 
 function MatchGameplay() {
@@ -131,7 +131,8 @@ function MatchGameplay() {
           <SituationCard situation={tableCard}/>
         </Alert>}
       <Container className='mt-5'>
-        <Hand situations={handCards}/>
+        {message && <Hand situations={handCards}/>}
+        {/*
         {!message && !loading &&
           <GuessSelector 
             setMessage={setMessage} 
@@ -139,6 +140,8 @@ function MatchGameplay() {
             selectedPosition={selectedPosition} 
             setSelectedPosition={setSelectedPosition}
             handleGuess={handleGuess}/>}
+        */}
+        {!message && <GuessHand handCards={handCards} setSelectedPosition={setSelectedPosition}/>}
       </Container>
       {message && !loading &&
         <div className="text-center mt-5">
