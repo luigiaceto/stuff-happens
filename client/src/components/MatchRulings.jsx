@@ -42,7 +42,7 @@ function MatchStart({loggedIn}) {
   return (
     <Container>
       {message && 
-        <Alert variant={message.type}>
+        <Alert className="w-50 text-center mx-auto" variant={message.type}>
           {message.msg}
         </Alert>}
       <Container className='glass-card'>

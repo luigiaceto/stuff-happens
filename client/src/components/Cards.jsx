@@ -3,7 +3,7 @@ import { useState, Fragment } from 'react';
 
 export function Hand({situations}) {
   return (
-    <Container fluid className='mt-3'>
+    <Container fluid className="mt-3">
       <Row className="justify-content-center align-items-center">
         {situations.map((situation) => (
           <Fragment key={situation.id}>

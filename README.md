@@ -238,7 +238,9 @@ Response body: Nessuno
 ## Main React Components
 
 - `LoginForm` in *AuthComponents.jsx* -> form che permette il login dell'utente
-- `Hand` in *Cards.jsx* -> renderizza un gruppo di carte (situazioni), usato sia per renderizzare la mano che le carte a fine partita
+- `Hand` in *Cards.jsx* -> renderizza un gruppo di carte (situazioni), usato per renderizzare la mano alla fine di ogni round
+- `GuessHand` in *Cards.jsx* -> renderizza un gruppo di carte (situazioni) insieme a dei placeholder per selezionare la posizione in cui inserire la nuova carta, inoltre renderizza un bottone usato per confermare la scelta
+- `CountDownTimer` in *MatchGameplay.jsx* -> renderizza un timer di 30s che forza il giocatore a fare una scelta in questo lasso di tempo. Se il giocatore non conferma la scelta entro 30s il round è automaticamente perso
 - `DefaultLayout` in *DefaultLayout.jsx* -> renderizza il default layout dell'app che comprende la navbar, messaggio di benvenuto e il footer
 - `HomeMenu` in *Home.jsx* -> renderizza la pagina home dell'app, contiene il tasto per spostarsi nella pagina di rulings e qualche scritta 
 - `MatchEnd` in *MatchEnd.jsx* -> renderizza la pagina di fine match con carte collezionate e messaggio di vittoria/sconfitta, nonchè tasto per giocare una nuova partita

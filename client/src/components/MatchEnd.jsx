@@ -40,11 +40,11 @@ function MatchEnd({loggedIn}) {
   }
 
   return (
-    <Container className="text-center">
+    <Container fluid className="text-center">
       {/*nel rendering iniziale matchInfo è null*/}
       {matchInfo &&
       <>
-      <Alert variant={matchInfo.match_result.type}>{matchInfo.match_result.msg}</Alert>  
+      <Alert className="w-50 text-center mx-auto" variant={matchInfo.match_result.type}>{matchInfo.match_result.msg}</Alert>  
       <h3 className='text-center mb-4'>
         Carte raccolte durante la partita:
       </h3>

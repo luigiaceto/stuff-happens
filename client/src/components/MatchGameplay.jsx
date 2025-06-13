@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { ProgressBar, Container, Row, Alert, Badge, Button, Card, Form, Col, Spinner } from 'react-bootstrap';
+import { ProgressBar, Container, Row, Alert, Badge, Button, Spinner } from 'react-bootstrap';
 import { GuessHand, Hand, SituationCard } from './Cards.jsx';
 import API from '../API.mjs';
 
@@ -114,7 +114,7 @@ function MatchGameplay() {
       </h2>
       {message && 
         <Row>
-          <Alert className="w-50 mx-auto" variant={message.type}>{message.msg}</Alert>
+          <Alert className="w-50 text-center mx-auto" variant={message.type}>{message.msg}</Alert>
         </Row>}
       {!message && !loading &&
         <Container className="w-25 mx-auto mt-2 glass-card py-3">
