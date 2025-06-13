@@ -3,11 +3,17 @@ import { useState, Fragment } from 'react';
 
 export function Hand({situations}) {
   return (
-    <Row className="g-1">
-      {situations.map(situation => (
-        <SituationCard key={situation.id} situation={situation}/>
-      ))}
-    </Row>
+    <Container fluid className='mt-3'>
+      <Row className="justify-content-center align-items-center">
+        {situations.map((situation) => (
+          <Fragment key={situation.id}>
+            <Col xs="auto">
+              <SituationCard situation={situation} />
+            </Col>
+          </Fragment>
+        ))}
+      </Row>
+    </Container>
   );
 }
 
@@ -23,7 +29,7 @@ export function SituationCard({situation}) {
         />
       </div>
       <Card.Body className="p-2 text-center">
-        <Card.Title>{situation.name}</Card.Title>
+        <Card.Title className="fs-6">{situation.name}</Card.Title>
         {situation.misfortune_index && <Card.Text>{situation.misfortune_index}</Card.Text>}
       </Card.Body>
     </Card>
@@ -43,7 +49,7 @@ export function GuessHand({ handCards, handleGuess }) {
   }
 
   return (
-    <Container>
+    <Container fluid className='mt-4'>
       <Row className="justify-content-center align-items-center">
         {Array.from({ length: handCards.length + 1 }).map((_, index) => (
           <Fragment key={index}>
@@ -63,7 +69,7 @@ export function GuessHand({ handCards, handleGuess }) {
         ))}
       </Row>
       <Container className="text-center">
-        <Button variant="primary mt-2 me-3" onClick={handleConfirm}>
+        <Button variant="primary mt-3 me-2" onClick={handleConfirm}>
           Conferma
         </Button>
       </Container>

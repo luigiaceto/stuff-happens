@@ -15,7 +15,7 @@ function DefaultLayout({user, loggedIn, handleLogout, message, setMessage}) {
         {message && (
           <Row className="mb-3">
             <Col>
-              <Alert 
+              <Alert className="w-50 mx-auto"
                 variant={message.type} 
                 onClose={() => setMessage('')} 
                 dismissible
@@ -25,7 +25,7 @@ function DefaultLayout({user, loggedIn, handleLogout, message, setMessage}) {
             </Col>
           </Row>
         )}
-        <Outlet />
+        <Outlet/>
       </Container>
       <footer className="text-center py-3 mt-auto">
         <Container>

@@ -108,28 +108,21 @@ function MatchGameplay() {
   // - message poichè non voglio mostrare certi componenti quando viene notificata
   //   sullo schermo la correttezza o meno della guess
   return (
-    <Container>
+    <Container fluid>
+      <h2 className='ms-5'>
+        Carte perse <Badge bg="secondary">{lostCards}</Badge>
+      </h2>
       {message && 
         <Row>
-          <Alert variant={message.type}>{message.msg}</Alert>
+          <Alert className="w-50 mx-auto" variant={message.type}>{message.msg}</Alert>
         </Row>}
-      <Row>
-        <Col>
-          <h2 className='ms-2'>
-            Carte perse <Badge bg="secondary">{lostCards}</Badge>
-          </h2>
-        </Col>
-        <Col className='mt-4'>
-          {!message && !loading &&
-            <CountdownTimer handleGuess={handleGuess}/>}
-        </Col>
-      </Row>
       {!message && !loading &&
-        <Alert variant="info" className="w-25 mx-auto mt-2">
+        <Container className="w-25 mx-auto mt-2 glass-card py-3">
           <SituationCard situation={tableCard}/>
-        </Alert>}
-      <Container className='mt-3'>
-        {message && <Hand situations={handCards}/>}
+          <CountdownTimer handleGuess={handleGuess}/>
+        </Container>}
+      <Container fluid>
+        {message && <Hand className="mt-4" situations={handCards}/>}
         {!message && <GuessHand handCards={handCards} handleGuess={handleGuess}/>}
       </Container>
       {message && !loading &&
@@ -175,6 +168,7 @@ const CountdownTimer = ({ handleGuess }) => {
       label={`${Math.ceil((30 - elapsed * 0.5))}s`} 
       animated 
       variant="success"
+      className="mt-3"
     />
   );
 };

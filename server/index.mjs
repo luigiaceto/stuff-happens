@@ -3,8 +3,6 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import { check, validationResult } from 'express-validator';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import dayjs from 'dayjs';
 import crypto from 'crypto';
 
