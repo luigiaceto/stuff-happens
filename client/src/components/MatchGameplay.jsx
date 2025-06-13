@@ -10,7 +10,6 @@ function MatchGameplay() {
   const [tableCard, setTableCard] = useState('');
   const [message, setMessage] = useState('');
   const [lostCards, setLostCards] = useState(0);
-  const [selectedPosition, setSelectedPosition] = useState(-1);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,7 +25,6 @@ function MatchGameplay() {
   // gestisce la richiesta di una nuova carta da guessare
   const handleNextCard = async () => {
     setMessage('');
-    setSelectedPosition(-1);
     setLoading(true);
     const nextSituation = await API.getNextSituation(matchId);
     setLoading(false);
@@ -43,9 +41,9 @@ function MatchGameplay() {
 
   // gestisce il guess di una carta, viene chiamata allo scadere del 
   // timer o al click del pulsante
-  const handleGuess = async () => {
+  const handleGuess = async (position) => {
     setLoading(true);
-    const guessResult = await API.guessPosition(matchId, tableCard.id, selectedPosition, handCards);
+    const guessResult = await API.guessPosition(matchId, tableCard.id, position, handCards);
     setLoading(false);
 
     // non inserendo return dopo questi navigate allora
@@ -127,21 +125,12 @@ function MatchGameplay() {
         </Col>
       </Row>
       {!message && !loading &&
-        <Alert variant="info" className="w-25 mx-auto mt-4">
+        <Alert variant="info" className="w-25 mx-auto mt-2">
           <SituationCard situation={tableCard}/>
         </Alert>}
-      <Container className='mt-5'>
+      <Container className='mt-3'>
         {message && <Hand situations={handCards}/>}
-        {/*
-        {!message && !loading &&
-          <GuessSelector 
-            setMessage={setMessage} 
-            handCards={handCards} 
-            selectedPosition={selectedPosition} 
-            setSelectedPosition={setSelectedPosition}
-            handleGuess={handleGuess}/>}
-        */}
-        {!message && <GuessHand handCards={handCards} setSelectedPosition={setSelectedPosition}/>}
+        {!message && <GuessHand handCards={handCards} handleGuess={handleGuess}/>}
       </Container>
       {message && !loading &&
         <div className="text-center mt-5">
@@ -174,7 +163,7 @@ const CountdownTimer = ({ handleGuess }) => {
   useEffect(() => {
     if (elapsed >= 60 && running) {
       setRunning(false);
-      handleGuess();
+      handleGuess(-1);
     }
   }, [elapsed, running]);
 
@@ -189,45 +178,5 @@ const CountdownTimer = ({ handleGuess }) => {
     />
   );
 };
-
-export function GuessSelector({handCards, selectedPosition, setSelectedPosition, handleGuess}) {
-  const generateOptions = () => {
-    const options = [];
-    for (let i = 1; i <= handCards.length+1; i++) {
-      options.push(
-        <option key={i} value={i-1}>{i}</option>
-      );
-    }
-    return options;
-  };
-
-  const handlePositionChange = (e) => {
-    const newPosition = e.target.value;
-    setSelectedPosition(newPosition);
-  };
-
-  return (
-    <Container>
-      <Card className="mt-4 glass-card">
-        <Card.Body>
-          <Card.Title className="mb-4" style={{color: '#32363d'}}>Seleziona la posizione nella tua mano (da sinistra) in cui mettere la carta del tavolo</Card.Title>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Select value={selectedPosition} onChange={handlePositionChange}>
-                <option value={-1}>Nessuna</option>
-                {generateOptions()}
-              </Form.Select>
-            </Form.Group>
-          </Form>
-            
-          {selectedPosition && 
-            <Button variant="primary mt-2 me-3" onClick={() => handleGuess()}>
-              Conferma
-            </Button>}
-        </Card.Body>
-      </Card>
-    </Container>
-  );
-}
 
 export default MatchGameplay;

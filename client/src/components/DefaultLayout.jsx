@@ -5,7 +5,7 @@ import NavHeader from "./NavHeader";
 function DefaultLayout({user, loggedIn, handleLogout, message, setMessage}) {
   
   return(
-    <div className="default-layout d-flex flex-column min-vh-100">
+    <Container fluid className="default-layout min-vh-100 p-0 m-0 d-flex flex-column">
       <NavHeader 
         user={user} 
         loggedIn={loggedIn} 
@@ -38,7 +38,7 @@ function DefaultLayout({user, loggedIn, handleLogout, message, setMessage}) {
           </Row>
         </Container>
       </footer>
-    </div>
+    </Container>
   );
 }
 

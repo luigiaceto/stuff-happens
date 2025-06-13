@@ -1,4 +1,4 @@
-import { Row, Card, Col, Button } from 'react-bootstrap';
+import { Row, Card, Col, Button, Container } from 'react-bootstrap';
 import { useState, Fragment } from 'react';
 
 export function Hand({situations}) {
@@ -30,33 +30,44 @@ export function SituationCard({situation}) {
   )
 }
 
-export function GuessHand({ handCards, setSelectedPosition }) {
-  const [selectedSlot, setSelectedSlot] = useState(null); // null o numero tra 0 e handCards.length
+export function GuessHand({ handCards, handleGuess }) {
+  const [selectedSlot, setSelectedSlot] = useState(-1); // null o numero tra 0 e handCards.length
 
   const handleSlotClick = (index) => {
     setSelectedSlot(index);         // evidenzia lo slot
     setSelectedPosition(index);     // chiama la funzione di inserimento
   };
 
+  const handleConfirm = () => {
+    handleGuess(selectedSlot);
+  }
+
   return (
-    <Row className="justify-content-center align-items-center g-2">
-      {Array.from({ length: handCards.length + 1 }).map((_, index) => (
-        <Fragment key={index}>
-          <Col xs="auto">
-            <InsertSlot
-              index={index + 1}
-              selected={selectedSlot === index}
-              onClick={() => handleSlotClick(index)}
-            />
-          </Col>
-          {index < handCards.length && (
+    <Container>
+      <Row className="justify-content-center align-items-center">
+        {Array.from({ length: handCards.length + 1 }).map((_, index) => (
+          <Fragment key={index}>
             <Col xs="auto">
-              <SituationCard situation={handCards[index]} />
+              <InsertSlot
+                index={index + 1}
+                selected={selectedSlot === index}
+                onClick={() => handleSlotClick(index)}
+              />
             </Col>
-          )}
-        </Fragment>
-      ))}
-    </Row>
+            {index < handCards.length && (
+              <Col xs="auto">
+                <SituationCard situation={handCards[index]} />
+              </Col>
+            )}
+          </Fragment>
+        ))}
+      </Row>
+      <Container className="text-center">
+        <Button variant="primary mt-2 me-3" onClick={handleConfirm}>
+          Conferma
+        </Button>
+      </Container>
+    </Container>
   );
 }
 
@@ -64,11 +75,10 @@ function InsertSlot({ index, selected, onClick }) {
   return (
     <Button
       variant={selected ? 'primary' : 'outline-secondary'}
-      size="sm"
       onClick={onClick}
       style={{
         height: '70px',
-        width: '30px',
+        width: '40px',
         padding: 0,
         borderStyle: 'dashed',
         fontWeight: selected ? 'bold' : 'normal',
