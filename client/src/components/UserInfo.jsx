@@ -77,6 +77,7 @@ function Match({match}) {
     <Accordion.Item eventKey={match.match_id}>
       <Accordion.Header>
         <Col>
+          {/* uso span per non andare a capo, come invece fa div (span è per elementi in-line) */}
           <span className="me-4">{match.date}</span>
           <span>Carte collezionate: {match.card_collected}</span>
         </Col>

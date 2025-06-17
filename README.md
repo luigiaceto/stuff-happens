@@ -1,6 +1,6 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/uNTgnFHD)
 # Exam #1: "Gioco della sfortuna"
-## Student: s343869 ACETO LUIGI 
+## Student: s343860 ACETO LUIGI 
 
 ## React Client Application Routes
 
@@ -21,7 +21,7 @@ HTTP Method: POST
 
 Description: inserisce un nuovo match nel DB. Usa la sessione per ottenere l'user nel caso il giocatore sia loggato.
 
-Request body: None
+Request body: Nessuno
 
 Response: `201 Created` (success), `503 Service Unavailable` (generic error), `422 Unprocessable Entity` (validation error).
 
@@ -153,15 +153,23 @@ richieste e il client potrà avere accesso alle routes protette da autenticazion
 
 Request body: 
 ```
-
+{
+  username: 'stu@gmail.com',
+  password: 'stuuuuuu'
+}
 ```
 
-Response:
+Response: `401 Unauthorized`, `201 Success`.
 
 
 Response body:
 ```
-
+{
+  id: 1,
+  email: 'stu@gmail.com',
+  name: 'Stu',
+  profile_pic: '/pp/stu.jpg'
+}
 ```
 
 
@@ -173,14 +181,18 @@ HTTP Method: POST
 Description: permette il controllo di sessione per vedere se l'utente
 è loggato.
 
-Request body: None
+Request body: Nessuno
 
-Response:
-
+Response: `401 Unauthorized`, `201 Success`.
 
 Response body:
 ```
-
+{
+  id: 1,
+  email: 'stu@gmail.com',
+  name: 'Stu',
+  profile_pic: '/pp/stu.jpg'
+}
 ```
 
 ### __Logout utente__
@@ -229,6 +241,7 @@ Response body: Nessuno
 | email (string) |
 | password (string) |
 | salt (string) |
+| profile_pic (string) |
 
 ## Main React Components
 

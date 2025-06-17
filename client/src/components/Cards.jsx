@@ -37,10 +37,10 @@ export function SituationCard({situation}) {
 }
 
 export function GuessHand({ handCards, handleGuess }) {
-  const [selectedSlot, setSelectedSlot] = useState(-1); // null o numero tra 0 e handCards.length
+  const [selectedSlot, setSelectedSlot] = useState(-1); // -1 o numero tra 0 e handCards.length
 
   const handleSlotClick = (index) => {
-    setSelectedSlot(index);         // evidenzia lo slot
+    setSelectedSlot(index); // seleziona lo slot da evidenziare
   };
 
   const handleConfirm = () => {
@@ -50,11 +50,15 @@ export function GuessHand({ handCards, handleGuess }) {
   return (
     <Container fluid className='mt-4'>
       <Row className="justify-content-center align-items-center">
+        {/* creo un'array di n+1 elementi da mappare in slot+carta*/}
         {Array.from({ length: handCards.length + 1 }).map((_, index) => (
+          // Fragment non rompe il layout come farebbe Container che invece
+          // in questo caso mi metterebbe gli elementi in righe diverse (motivo: 
+          // gli elementi anche se sono in Col non sono figli diretti di Row)
           <Fragment key={index}>
             <Col xs="auto">
               <InsertSlot
-                index={index + 1}
+                index={index + 1} // serve al componente IndexSlot per visualizzare il numero dello slot
                 selected={selectedSlot === index}
                 onClick={() => handleSlotClick(index)}
               />

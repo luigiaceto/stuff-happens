@@ -40,7 +40,7 @@ app.use(cors(corsOptions));
 // - verify è una callback di verifica chiamata con username e
 //   password presi dal body della richiesta
 passport.use(new LocalStrategy(async function verify(username, password, cb) {
-  // retrieve dell'user per vedere se esiste
+  // retrieve dell'user dal DB per vedere se esiste
   const user = await getUser(username, password);
   if(!user)
     return cb(null, false, 'Username o password errati');
@@ -54,13 +54,13 @@ passport.serializeUser(function (user, cb) {
 });
 
 // quando una richiesta arriva con una sessione attiva, Passport 
-// richiama questa funzione per ricostruire req.user
+// richiama questa funzione per ricostruire req.user da questa sessione
 passport.deserializeUser(function (user, cb) {
   return cb(null, user);
 });
 
-// middlewere di autenticazione da applicare a route
-// specifiche (quelle da proteggere)
+// definizione middlewere di autenticazione da applicare a route
+// specifiche (quelle da proteggere), non è globale
 const isLoggedIn = (req, res, next) => {
   if(req.isAuthenticated()) {
     return next();
@@ -329,6 +329,7 @@ app.post('/api/sessions', function(req, res, next) {
 
 // GET /api/sessions/current - controllo se c'è una sessione attiva (utente loggato)
 app.get('/api/sessions/current', (req, res) => {
+  console.log("req del check sessione", req);
   if(req.isAuthenticated()) {
     res.json(req.user);}
   else
