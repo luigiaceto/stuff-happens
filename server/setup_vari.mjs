@@ -130,7 +130,7 @@ async function main() {
   await SituationDAO.addSituation(sit47);
   const sit48 = new Situation(47, "L'aereo su cui viaggi precipita su un'isola deserta, ma tu sopravvivi ", 97.5, "/img/island.jpg");
   await SituationDAO.addSituation(sit48);
-  const sit49 = new Situation(48, "Ti colpisce un fulmine mentre sei in escursione in montagna", 98.0, "/img/fulmine.jpg");
+  const sit49 = new Situation(48, "Ti colpisce un fulmine mentre sei in escursione in montagna paralizzandoti", 98.0, "/img/fulmine.jpg");
   await SituationDAO.addSituation(sit49);
   const sit50 = new Situation(49, "Vieni rapito dai pirati durante una gita in barca", 100.0, "/img/pirati.jpg");
   await SituationDAO.addSituation(sit50);

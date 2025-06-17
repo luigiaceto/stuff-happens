@@ -25,7 +25,7 @@ function LoginForm(props) {
       threshold={0.2}
       delay={0.1}
     >
-      <Container className='d-flex justify-content-center align-items-start glass-card text-center w-25'>
+      <Container className='d-flex justify-content-center align-items-start glass-card text-center w-25 mt-4'>
         <Row>
           <Col>
             <Form onSubmit={handleSubmit}>

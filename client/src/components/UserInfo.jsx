@@ -90,7 +90,7 @@ function Match({match}) {
         {match.match_situations
         .sort((a, b) => a.round - b.round)
         .map((situation) => (
-          <Card key={situation.id} className="mb-3">
+          <Card key={situation.id} className="mb-3 basic-shadow border-0" style={{ backgroundColor: '#d6e0c1' }}>
             <Card.Body className="d-flex flex-row justify-content-between align-items-center">
               <Card.Title>{situation.name}</Card.Title>
               <Card.Text>

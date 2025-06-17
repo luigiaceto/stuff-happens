@@ -23,7 +23,7 @@ function MatchStart({loggedIn}) {
   const handleBegin = async () => {
     setMessage('');
     setLoading(true);
-    const matchInfo = await API.startMatch(loggedIn ? 'No' : 'Yes');
+    const matchInfo = await API.startMatch();
     setLoading(false);
     if (matchInfo.error) {
       setMessage({msg: 'Ops, il server ha riscontrato un errore. Riprova', type: 'danger'});
@@ -40,7 +40,7 @@ function MatchStart({loggedIn}) {
   }
 
   return (
-    <Container>
+    <Container className='mt-3'>
       {message && 
         <Alert className="w-50 text-center mx-auto" variant={message.type}>
           {message.msg}

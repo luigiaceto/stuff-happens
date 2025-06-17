@@ -58,7 +58,6 @@ function MatchGameplay() {
       });
       return;
     } else if (guessResult.cheatError) {
-      console.log(guessResult);
       navigate('/match/new', {
         state: {
           msg: 'Ops, sembra tu stia cercando di imbrogliare o rompere il gioco. Riprova :)',
@@ -168,7 +167,7 @@ const CountdownTimer = ({ handleGuess }) => {
       label={`${Math.ceil((30 - elapsed * 0.5))}s`} 
       animated 
       variant="success"
-      className="mt-3"
+      className="mt-3 me-2 ms-2"
     />
   );
 };

@@ -19,14 +19,9 @@ URL: `/api/matches/new`
 
 HTTP Method: POST
 
-Description: inserisce un nuovo match nel DB. Usa la sessione per ottenere l'user nel caso il giocator sia loggato.
+Description: inserisce un nuovo match nel DB. Usa la sessione per ottenere l'user nel caso il giocatore sia loggato.
 
-Request body:
-```
-{
-  "demo": "Yes"/"No"
-}
-```
+Request body: None
 
 Response: `201 Created` (success), `503 Service Unavailable` (generic error), `422 Unprocessable Entity` (validation error).
 
@@ -103,7 +98,7 @@ Description: ottieni una nuova carta dal mazzo da indovinare.
 
 Request body: Nessuno
 
-Response: `200 Ok` (success), `404 Not found` (wrong match_id), `500 Internal Server Error` (generic error).
+Response: `200 Ok` (success), `404 Not found` (wrong match_id), `500 Internal Server Error` (generic error), `401 Not Authorized`.
 
 Response body:
 ```
@@ -123,7 +118,7 @@ Description: per un utente, ottieni i match giocati con le relative informazioni
 
 Request body: Nessuno
 
-Response: `200 Ok` (success), `500 Internal Server Error`.
+Response: `200 Ok` (success), `500 Internal Server Error`, `401 Not Authorized`.
 
 Response body:
 ```

@@ -1,14 +1,11 @@
 const SERVER_URL = 'http://localhost:3001';
 
-const startMatch = async (demo) => {
+const startMatch = async () => {
   const response = await fetch(`${SERVER_URL}/api/matches/new`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      demo: demo
-    }),
     credentials: 'include'
   });
   if (response.ok) {

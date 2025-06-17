@@ -23,7 +23,7 @@ function MatchEnd({loggedIn}) {
   // in due route separate.
   const handleBegin = async () => {
     setLoading(true);
-    const matchInfo = await API.startMatch(loggedIn ? 'No' : 'Yes');
+    const matchInfo = await API.startMatch();
     setLoading(false);
     if (matchInfo.error) {
       setMessage({msg: 'Ops, il server ha riscontrato un errore. Riprova', type: 'danger'});

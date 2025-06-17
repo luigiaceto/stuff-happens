@@ -1,4 +1,4 @@
-// libraries imports
+// import di libreria
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -6,24 +6,24 @@ import { check, validationResult } from 'express-validator';
 import dayjs from 'dayjs';
 import crypto from 'crypto';
 
-// passport imports
+// import di passport
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import session from 'express-session';
 
-// local imports
+// import locali
 import * as MatchDAO from './dao/matchDAO.mjs';
 import * as SituationDAO from './dao/situationDAO.mjs';
 import { getUser } from './dao/userDAO.mjs';
 
-// inizializzazione express
+// inizializzazione server express
 const app = new express();
 const port = 3001;
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(express.static('public'));
 
-// set up e attivazione CORS
+// setup e attivazione CORS
 const corsOptions = {
     // il server accetta richieste solo da qui
     origin: 'http://localhost:5173',
@@ -32,11 +32,11 @@ const corsOptions = {
     // Authorization headers se presenti
     credentials: true
 };
-// applica il middlewere CORS a tutte le routes del server
+// applicazione middlewere CORS a tutte le routes del server
 app.use(cors(corsOptions));
 
-// Set up Passport
-// - utilizzo della local strategy ceh sfrutta username e password
+// setup Passport
+// - utilizzo della local strategy che sfrutta username e password
 // - verify è una callback di verifica chiamata con username e
 //   password presi dal body della richiesta
 passport.use(new LocalStrategy(async function verify(username, password, cb) {
@@ -55,13 +55,12 @@ passport.serializeUser(function (user, cb) {
 
 // quando una richiesta arriva con una sessione attiva, Passport 
 // richiama questa funzione per ricostruire req.user
-passport.deserializeUser(function (user, cb) { // this user is id + email + name
+passport.deserializeUser(function (user, cb) {
   return cb(null, user);
-  // if needed, we can do extra check here (e.g., double check that the user is still in the database, etc.)
 });
 
-// middlewere di autenticazione da applicare poi a route
-// specifiche
+// middlewere di autenticazione da applicare a route
+// specifiche (quelle da proteggere)
 const isLoggedIn = (req, res, next) => {
   if(req.isAuthenticated()) {
     return next();
@@ -112,7 +111,9 @@ function getRandomObjects(array, n) {
 //  A  B  C  D
 // 0 1  2  3  4
 function checkCardOrder(position, misfortune_index, hand) {
+  // nel caso al server arrivino mani non ordinate
   const orderedHand = hand.sort((a, b) => a.misfortune_index - b.misfortune_index);
+
   if (position === 0) {
     return misfortune_index < orderedHand[0].misfortune_index;
   } else if (position === hand.length) {
@@ -125,15 +126,13 @@ function checkCardOrder(position, misfortune_index, hand) {
 
 /*** ROUTES ***/
 // POST /api/matches/new
-app.post('/api/matches/new', [
-    check('demo').isString().isIn(['Yes', 'No'])
-  ], async (req, res) => {
-    const validationErrors = validationResult(req);
-    if (!validationErrors.isEmpty()) {
-      return res.status(422).json({errors: validationErrors.array()});
-    }
-
-    const user_id = req.body.demo === 'No' ? req.user.id : null;
+app.post('/api/matches/new', 
+  async (req, res) => {
+    // se l'utente è loggato passport avrà iniettato l'user nella
+    // richiesta tramite middlewere. Evito così di far mandare 
+    // all'utente "demo: Yes/No" così non devo fare controlli
+    // per vedere se manda No nonostante non sia loggato
+    const user_id = req.user ? req.user.id : null;
     try {
       const match_id = await MatchDAO.addMatch(user_id);
       const allSituations = await SituationDAO.getAllSituations();
@@ -145,7 +144,7 @@ app.post('/api/matches/new', [
         MatchDAO.addSituationInMatch(situation.id, match_id, 0, 'Vinta'))
       );
       
-      // null poichè devo aspettare la risposta del client per l'esito del guess
+      // null poichè devo aspettare la risposta del client per l'esito della guess
       await MatchDAO.addSituationInMatch(tableSituation.id, match_id, 1, null);
 
       const responseData = {
@@ -193,16 +192,14 @@ app.post('/api/matches/:matchId/guess', [
       const end_timestamp = dayjs().format('YYYY-MM-DD HH:mm:ss');
       const {true_situation_id, start_timestamp} = await MatchDAO.getGuessStartingTime(match_id);
 
-      console.log(true_situation_id, " ", start_timestamp, " ", end_timestamp);
-
-      // verifico che siano effettivamente passati al massimo 30s + un delta, e che
+      // verifico che siano effettivamente passati al massimo 30s + un delta (1s), e che
       // la situazione indovinata sia quella richiesta prima dal client. Altri check
       // per coprire eventuali tentativi di rottura del gioco
       if (dayjs(end_timestamp).diff(start_timestamp, 'second') > 31 ||
           req.body.guessed_situation_id !== true_situation_id || 
           req.body.match_situations.length > 5 ||
           req.body.guessed_position > req.body.match_situations.length) {
-        return res.status(422).json({cheatError: 'Sospetto cheat'});
+        return res.status(422).json({cheatError: 'Sospetto di cheat'});
       }
       
       const guessedSituation = await SituationDAO.getSituationById(req.body.guessed_situation_id);
@@ -310,27 +307,27 @@ app.get('/api/users/:userId/matches',
   }
 );
 
-// POST /api/sessions - Login of the user, returns the user data to the client
+// POST /api/sessions - login utente, ritorna al client i dati dell'utente
 app.post('/api/sessions', function(req, res, next) {
   passport.authenticate('local', (err, user, info) => {
     if (err)
       return next(err);
       if (!user) {
-        // display wrong login messages
+        // messaggio login errato
         return res.status(401).send(info);
       }
-      // success, perform the login
+      // successo
       req.login(user, (err) => {
         if (err)
           return next(err);
         
-        // req.user contains the authenticated user, we send all the user info back
+        // req.user contiene l'user autnticato, rimando le info al client
         return res.status(201).json(req.user);
       });
   }) (req, res, next);
 });
 
-// GET /api/sessions/current - Checks if there's an active session (the user is logged)
+// GET /api/sessions/current - controllo se c'è una sessione attiva (utente loggato)
 app.get('/api/sessions/current', (req, res) => {
   if(req.isAuthenticated()) {
     res.json(req.user);}
@@ -338,14 +335,14 @@ app.get('/api/sessions/current', (req, res) => {
     res.status(401).json({error: 'Not authenticated'});
 });
 
-// DELETE /api/session/current - Logout of the user, deletes the session
+// DELETE /api/session/current - logout utente, elimina sessione
 app.delete('/api/sessions/current', (req, res) => {
   req.logout(() => {
     res.end();
   });
 });
 
-// activate the server
+// attiva server express
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });

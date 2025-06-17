@@ -41,7 +41,6 @@ export function GuessHand({ handCards, handleGuess }) {
 
   const handleSlotClick = (index) => {
     setSelectedSlot(index);         // evidenzia lo slot
-    setSelectedPosition(index);     // chiama la funzione di inserimento
   };
 
   const handleConfirm = () => {
