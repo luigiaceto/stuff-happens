@@ -262,7 +262,9 @@ Nota: la tabella situation_in_match rappresenta la relazione che lega ogni match
 
 ## Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+![Screenshot](./img/gameplay.png)
+
+![Screenshot](./img/user_profile.png)
 
 ## Users Credentials
 
