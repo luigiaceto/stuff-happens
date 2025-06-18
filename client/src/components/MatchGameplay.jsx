@@ -14,7 +14,8 @@ function MatchGameplay() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // carica i dati iniziali della partita nello stato
+  // sul mount, carica i dati iniziali della partita (passati dalla
+  // pagina precedente) nello stato
   useEffect(() => {
     const { matchId, startingSituations, tableSituation } = location.state;
     setMatchId(matchId);
@@ -47,8 +48,9 @@ function MatchGameplay() {
     setLoading(false);
 
     // non inserendo return dopo questi navigate allora
-    // il navigate di fine partita sovrascrive quelli prima
-    // che si attiva anche nel caso di errore del server
+    // il navigate di fine partita li va a sovrascrivere
+    // (in casso di errore esso si attiva quando controlla il campo
+    // in_progress della risposta)
     if (guessResult.error) {
       navigate('/match/new', {
         state: {
@@ -140,24 +142,21 @@ function MatchGameplay() {
 
 const CountdownTimer = ({ handleGuess }) => {
   const [elapsed, setElapsed] = useState(0);
-  const [running, setRunning] = useState(true);
 
   useEffect(() => {
-    if (!running) return;
-
     const intervalId = setInterval(() => {
       setElapsed(prev => prev + 1);
     }, 500);
 
+    // pulisce l'intervallo quando il componente viene smontato
     return () => clearInterval(intervalId);
-  }, [running]);
+  }, []);
 
   useEffect(() => {
-    if (elapsed >= 60 && running) {
-      setRunning(false);
+    if (elapsed >= 60 ) {
       handleGuess(-1);
     }
-  }, [elapsed, running]);
+  }, [elapsed]);
 
   const percentage = 100 - (elapsed / 60) * 100;
 

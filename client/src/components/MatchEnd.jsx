@@ -4,7 +4,7 @@ import { Hand } from './Cards';
 import { Container, Alert, Button, Spinner } from 'react-bootstrap';
 import API from '../API.mjs';
 
-function MatchEnd({loggedIn}) {
+function MatchEnd() {
   const location = useLocation();
   const navigate = useNavigate();
   const [matchInfo, setMatchInfo] = useState(null); 
@@ -41,7 +41,7 @@ function MatchEnd({loggedIn}) {
 
   return (
     <Container fluid className="text-center">
-      {/*nel rendering iniziale matchInfo è null*/}
+      {/* all'inizio del rendering matchInfo è null quindi darebbe errore */}
       {matchInfo &&
       <>
       <Alert className="w-50 text-center mx-auto" variant={matchInfo.match_result.type}>{matchInfo.match_result.msg}</Alert>  

@@ -4,13 +4,13 @@
 
 ## React Client Application Routes
 
-- Route `/`: home dell'app (landing page)
-- Route `/user/:userId/profile`: profilo dell'utente loggato, mostra la cronologia delle partite giocate dall'utente con id nel DB pari a userId
-- Route `/match/new`: pagina con regole del gioco, permette di iniziare effettivamente una partita (demo o non demo)
-- Route `/match/:matchId/play`: pagina in cui viene giocata la partita con id nel DB pari a matchId
-- Route `/match/:matchId/end`: pagina su cui si viene rediretti dopo la fine della partita con id nel DB pari a matchId
-- Route `/login`: pagina per eseguire il login di un utente riempendo dei campi
-- Route `*`: pagina che rappresenta una route a cui non è associata nessuna pagina. Quando si inserisce nell'URL una route non uguale a una di quelle appena elencate si viene rediretti a '*'
+- `/`: home dell'app (landing page)
+- `/user/:userId/profile`: profilo dell'utente loggato, mostra la cronologia delle partite giocate dall'utente con id nel DB pari a userId
+- `/match/new`: pagina con regole del gioco, permette di iniziare effettivamente una partita (demo o non demo)
+- `/match/:matchId/play`: pagina in cui viene giocata la partita con id nel DB pari a matchId
+- `/match/:matchId/end`: pagina su cui si viene rediretti dopo la fine della partita con id nel DB pari a matchId
+- `/login`: pagina per eseguire il login di un utente riempendo dei campi
+- `*`: pagina che rappresenta una route a cui non è associata nessuna pagina. Quando si inserisce nell'URL una route non uguale a una di quelle appena elencate si viene rediretti a '*'
 
 ## API Server
 
@@ -212,14 +212,14 @@ Response body: Nessuno
 
 | `situation` |
 |-------------|
-| id (int) |
+| **id** (int) |
 | name (string) |
 | misfortune_index (real) |
 | img_path (string) |
 
 | `match` |
 |---------|
-| id (int) |
+| **id** (int) |
 | user_id (int) |
 | result (string) |
 | round (int) |
@@ -228,33 +228,35 @@ Response body: Nessuno
 
 | `situation_in_match` |
 |----------------------|
-| situation_id (int) |
-| match_id (int) |
+| **situation_id** (int) |
+| **match_id** (int) |
 | round (int) |
 | result (string) |
 | timestamp (string) |
 
 | `user` |
 |--------|
-| id (int) |
+| **id** (int) |
 | name (string) |
 | email (string) |
 | password (string) |
 | salt (string) |
 | profile_pic (string) |
 
+Nota: la tabella situation_in_match rappresenta la relazione che lega ogni match alle carte presenti in esso.
+
 ## Main React Components
 
-- `LoginForm` in *AuthComponents.jsx* -> form che permette il login dell'utente
+- `LoginForm` in *AuthComponents.jsx* -> form che permette all'utente di eseguire il login
 - `Hand` in *Cards.jsx* -> renderizza un gruppo di carte (situazioni), usato per renderizzare la mano alla fine di ogni round
 - `GuessHand` in *Cards.jsx* -> renderizza un gruppo di carte (situazioni) insieme a dei placeholder per selezionare la posizione in cui inserire la nuova carta, inoltre renderizza un bottone usato per confermare la scelta
 - `CountDownTimer` in *MatchGameplay.jsx* -> renderizza un timer di 30s che forza il giocatore a fare una scelta in questo lasso di tempo. Se il giocatore non conferma la scelta entro 30s il round è automaticamente perso
 - `DefaultLayout` in *DefaultLayout.jsx* -> renderizza il default layout dell'app che comprende la navbar, messaggio di benvenuto e il footer
-- `HomeMenu` in *Home.jsx* -> renderizza la pagina home dell'app, contiene il tasto per spostarsi nella pagina di rulings e qualche scritta 
-- `MatchEnd` in *MatchEnd.jsx* -> renderizza la pagina di fine match con carte collezionate e messaggio di vittoria/sconfitta, nonchè tasto per giocare una nuova partita
-- `MatchGameplay` in *MatchGameplay.jsx* -> renderizza la partita vera e propria che comprende timer, selettore della posizione, mano e carta sul tavolo nonchè messaggi che avvisano sul risultato della guess
+- `HomeMenu` in *Home.jsx* -> renderizza la pagina home dell'app, contiene il tasto per spostarsi nella pagina di rulings, per iniziare a giocare, e qualche scritta 
 - `MatchRulings` in *MatchRulings.jsx* -> renderizza la pagina per iniziare effettivamente una partita. Comprende il regolamento e il tasto per iniziare un match (demo o non)
-- `NavHeader` in *NavHeader.jsx* -> renderizza il navigation header dell'app, comprende il tasto per andare in home, quello per andare sul profilo utente e quello per accedere alla pagina in cui effettuare il login
+- `MatchGameplay` in *MatchGameplay.jsx* -> renderizza la partita vera e propria che comprende timer, mano e carta sul tavolo nonchè messaggi che avvisano sul risultato della guess
+- `MatchEnd` in *MatchEnd.jsx* -> renderizza la pagina di fine match con carte collezionate e messaggio di vittoria/sconfitta, nonchè tasto per giocare una nuova partita
+- `NavHeader` in *NavHeader.jsx* -> renderizza il navigation header dell'app, comprende il tasto per andare in home, quello per andare sul profilo utente e quello per accedere alla pagina in cui effettuare il login (oppure se si è loggati diventa il tasto per fare logout)
 - `NotFound` in *NotFound.jsx* -> renderizza la semplice pagina 404 quando si inserisce una route non esistente dell'applicazione come URL
 - `UserProfile` in *UserInfo.jsx* -> renderizza la pagina del profilo utente, ci si può accedere solo se loggati e mostra il nome utente insieme ad una lista ad espansione delle partite giocate ordinate cronologicamente
 

@@ -42,9 +42,9 @@ app.use(cors(corsOptions));
 passport.use(new LocalStrategy(async function verify(username, password, cb) {
   // retrieve dell'user dal DB per vedere se esiste
   const user = await getUser(username, password);
+  // se non è stato trovato si torna messaggio di errore al client
   if(!user)
     return cb(null, false, 'Username o password errati');
-  // se l'utente è valido
   return cb(null, user);
 }));
 
@@ -53,8 +53,8 @@ passport.serializeUser(function (user, cb) {
   cb(null, user);
 });
 
-// quando una richiesta arriva con una sessione attiva, Passport 
-// richiama questa funzione per ricostruire req.user da questa sessione
+// quando una richiesta arriva con una sessione attiva, questa 
+// funzione viene chiamata per ricostruire req.user
 passport.deserializeUser(function (user, cb) {
   return cb(null, user);
 });
@@ -80,6 +80,7 @@ app.use(session({
 app.use(passport.authenticate('session'));
 
 /*** Utils ***/
+// per estrazione carte casuali
 function getRandomObjects(array, n) {
   const arrayCopy = [...array];
   const result = [];
@@ -204,6 +205,9 @@ app.post('/api/matches/:matchId/guess', [
       
       const guessedSituation = await SituationDAO.getSituationById(req.body.guessed_situation_id);
       const guessedPosition = req.body.guessed_position;
+      // in realtà il server potrebbe andarsi a recuperare le carte in mano
+      // all'utente ma ciò vorrebbe dire fare un ulteriore query nel DB che richiede
+      // un join tra la tabella delle situazioni nei match e la tabella delle situazioni
       const hand = req.body.match_situations;
 
       let responseData = {
@@ -221,6 +225,7 @@ app.post('/api/matches/:matchId/guess', [
         responseData.guess_result = 'correct';
         if (await MatchDAO.getWonSituations(match_id) === 6 || demo) {
           // match vinto
+          // non c'è bisogno di aggiornare la partita demo tanto non verrà mai visualizzata
           !demo && await MatchDAO.endMatch(match_id, 'Vittoria');
           responseData.match_state = 'won';
         }
@@ -283,12 +288,12 @@ app.get('/api/users/:userId/matches',
       const responseData = await Promise.all(
         matches.map(async (match) => {
           const situations = (await MatchDAO.getMatchSituations(match.id))
-          .map(situation => ({
-            id: situation.id,
-            name: situation.name,
-            round: situation.round,
-            result: situation.result
-          }));
+            .map(situation => ({
+              id: situation.id,
+              name: situation.name,
+              round: situation.round,
+              result: situation.result
+            }));
           const collected_cards = situations.filter(s => s.result === 'Vinta').length;
           return {
             match_id: match.id,
@@ -329,7 +334,6 @@ app.post('/api/sessions', function(req, res, next) {
 
 // GET /api/sessions/current - controllo se c'è una sessione attiva (utente loggato)
 app.get('/api/sessions/current', (req, res) => {
-  console.log("req del check sessione", req);
   if(req.isAuthenticated()) {
     res.json(req.user);}
   else

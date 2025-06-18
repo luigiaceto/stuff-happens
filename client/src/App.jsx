@@ -35,7 +35,7 @@ function App() {
       setLoggedIn(true);
       setMessage({msg: `Benvenuto, ${user.name}!`, type: 'success'});
       setUser(user);
-    } catch(err) {
+    } catch (err) {
       setMessage({msg: err, type: 'danger'});
     }
   };
@@ -55,7 +55,7 @@ function App() {
         <Route path='/user/:userId/profile' element={<UserProfile user={user}/>}/>
         <Route path='/match/new' element={<MatchRulings loggedIn={loggedIn}/>}/>
         <Route path='/match/:matchId/play' element={<MatchGameplay/>}/>
-        <Route path='/match/:matchId/end' element={<MatchEnd loggedIn={loggedIn}/>}/>
+        <Route path='/match/:matchId/end' element={<MatchEnd/>}/>
         <Route path='/login' element={loggedIn ? <Navigate replace to='/'/> : <LoginForm login={handleLogin}/>}/>
         <Route path='*' element={<NotFound/>}/>
       </Route>

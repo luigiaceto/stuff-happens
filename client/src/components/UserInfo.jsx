@@ -8,7 +8,7 @@ function UserProfile({user}) {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // fetch i match dell'utente al mount
+  // fetch dei match dell'utente al mount
   useEffect(() => {
     const getMatches = async () => {
       const matches = await API.getMatchHistory(user.id);
@@ -39,7 +39,6 @@ function UserProfile({user}) {
                   colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
                   animationSpeed={3}
                   showBorder={false}
-                  className="custom-class"
                 >
                   {user.name}
                 </GradientText>
@@ -64,9 +63,9 @@ function MatchList({matches}) {
   return (
     <Accordion>
       {matches
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .map((match) => (
-        <Match key={match.match_id} match={match}/>
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .map((match) => (
+          <Match key={match.match_id} match={match}/>
       ))}
     </Accordion>
   );

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Form, Button, Row, Col, Card, Container } from 'react-bootstrap';
+import { Form, Button, Row, Col, Container } from 'react-bootstrap';
 import { Link } from 'react-router';
 import AnimatedContent from './reactbits_components/AnimatedContent.jsx';
 
@@ -9,9 +9,7 @@ function LoginForm(props) {
   
   const handleSubmit = (event) => {
       event.preventDefault();
-      
       const credentials = { username, password };
-      
       props.login(credentials);
   };
 

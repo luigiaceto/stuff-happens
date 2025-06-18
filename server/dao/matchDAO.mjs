@@ -52,7 +52,7 @@ export const incrementAndGetRound = (match_id) => {
 }
 
 export const getGuessStartingTime = (match_id) => {
-  // cerco il timestamp dell'ultima situazione inserita nella partita
+  // cerco il timestamp dell'ultima situazione aggiunta alla partita
   return new Promise((resolve, reject) => {
     const sql = "SELECT situation_id, timestamp FROM situation_in_match WHERE match_id = ? AND result IS NULL";
     db.get(sql, [match_id], (err, row) => {

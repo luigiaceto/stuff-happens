@@ -6,6 +6,7 @@ const startMatch = async () => {
     headers: {
       'Content-Type': 'application/json',
     },
+    // include cookie anche su richieste cross-origin
     credentials: 'include'
   });
   if (response.ok) {

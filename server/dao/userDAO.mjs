@@ -51,23 +51,3 @@ export const getUser = (email, password) => {
     });
   });
 };
-
-// usato internamente dal server nel caso, per poter controllare
-// che un utente, dato l'id, sia ancora memorizzato nel DB
-export const getUserById = (id) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM user WHERE id = ?';
-    db.get(sql, [id], (err, row) => {
-      if (err) { 
-        reject(err); 
-      }
-      else if (row === undefined) { 
-        resolve({error: 'User not found!'}); 
-      }
-      else {
-        const user = {id: row.user_id, username: row.email, name: row.name, profile_pic: row.profile_pic};
-        resolve(user);
-      }
-    });
-  });
-};

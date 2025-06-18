@@ -7,7 +7,9 @@ function Match(id, user_id, result, round, terminated, date) {
   this.date = date;
 }
 
-// il timestamp non mi serve quando restituisco una situazione
+// il timestamp non mi serve quando restituisco una situazione dunque non lo includo nell'oggetto.
+// uso questo oggetto per modellare sia la situazione che la situazione della cronologia della partita
+// che è arricchita con altre info
 function Situation(id, name, misfortune_index, img_path, match_id=null, round=null, result=null) {
   this.id = id;
   this.name = name;
