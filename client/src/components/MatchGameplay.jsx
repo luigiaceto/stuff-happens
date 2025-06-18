@@ -11,16 +11,18 @@ function MatchGameplay() {
   const [message, setMessage] = useState('');
   const [lostCards, setLostCards] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [demoGame, setDemoGame] = useState();
   const navigate = useNavigate();
   const location = useLocation();
 
   // sul mount, carica i dati iniziali della partita (passati dalla
   // pagina precedente) nello stato
   useEffect(() => {
-    const { matchId, startingSituations, tableSituation } = location.state;
+    const { matchId, startingSituations, tableSituation, demo } = location.state;
     setMatchId(matchId);
     setHandCards(startingSituations);
     setTableCard(tableSituation);
+    setDemoGame(demo);
   }, []);
 
   // gestisce la richiesta di una nuova carta da guessare
@@ -110,9 +112,10 @@ function MatchGameplay() {
   //   sullo schermo la correttezza o meno della guess
   return (
     <Container fluid>
-      <h2 className='ms-5'>
-        Carte perse <Badge bg="secondary">{lostCards}</Badge>
-      </h2>
+      {demoGame === false && 
+        <h2 className='ms-5'>
+          Carte perse <Badge bg="danger">{lostCards}</Badge>
+        </h2>}
       {message && 
         <Row>
           <Alert className="w-50 text-center mx-auto" variant={message.type}>{message.msg}</Alert>

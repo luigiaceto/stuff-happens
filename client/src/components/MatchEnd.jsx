@@ -4,7 +4,7 @@ import { Hand } from './Cards';
 import { Container, Alert, Button, Spinner } from 'react-bootstrap';
 import API from '../API.mjs';
 
-function MatchEnd() {
+function MatchEnd({ loggedIn }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [matchInfo, setMatchInfo] = useState(null); 
@@ -30,11 +30,13 @@ function MatchEnd() {
       return;
     }
     const { match_id, starting_situations, table_situation } = matchInfo;
+    const demo = loggedIn === true ? false : true;
     navigate(`/match/${match_id}/play`, {
       state: {
         matchId: match_id,
         startingSituations: starting_situations.sort((a, b) => a.misfortune_index - b.misfortune_index),
-        tableSituation: table_situation
+        tableSituation: table_situation,
+        demo: demo
       }
     });
   }
