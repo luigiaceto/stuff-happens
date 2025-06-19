@@ -36,6 +36,8 @@ const SplitText = ({
 
   onLetterAnimationComplete,
 
+  color
+
 }) => {
 
   const ref = useRef(null);
@@ -208,6 +210,7 @@ const SplitText = ({
 
         wordWrap: "break-word",
 
+        color: color
       }}
 
     >

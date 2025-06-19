@@ -92,7 +92,7 @@ function InsertSlot({ index, selected, onClick }) {
         borderStyle: 'dashed',
         fontWeight: selected ? 'bold' : 'normal',
       }}
-      title={`Inserisci alla posizione ${index}`}
+      title={`Inserisci nella posizione ${index}`}
     >
       {index}
     </Button>

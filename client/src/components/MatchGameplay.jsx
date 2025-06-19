@@ -88,9 +88,9 @@ function MatchGameplay() {
     }
     
     if (guessResult.match_state !== 'in_progress') {
-      let end_message = {type: 'success', msg: 'Partita vinta!'};
+      let end_message = {type: 'success', msg: '🏆Partita vinta!🏆'};
       if (guessResult.match_state === 'lost') {
-        end_message = {type: 'danger', msg: 'Partita persa!'};
+        end_message = {type: 'danger', msg: '❌Partita persa!❌'};
       }
       // per l'ultimo round non serve mostrare il risultato della guess:
       // - se la partita è vinta, allora l'ultima carta è stata indovinata
@@ -131,7 +131,7 @@ function MatchGameplay() {
       </Container>
       {message && !loading &&
         <div className="text-center mt-5">
-          <Button variant="success" size="lg" className="w-25 py-3 mb-3 basic-shadow" onClick={handleNextCard}>
+          <Button variant="success" size="lg" className="py-3 mb-3 basic-shadow" style={{ width: "300px" }} onClick={handleNextCard}>
             Prossima carta
           </Button>
         </div>}

@@ -19,12 +19,12 @@ function HomeMenu() {
             textAlign="center"
           />
           <p className="lead mb-5">
-            Scopri fino a 50 situazioni in cui potresti trovarti durante una
-            vacanza e prova a indovinare le più assurde e sfortunate.
+            🏖️ Scopri fino a 50 situazioni in cui potresti trovarti durante una
+            vacanza e prova a indovinare le più assurde e sfortunate 🌴
           </p>
           <Row className="justify-content-center">
             <Col md={6} lg={4}>
-              <Button variant="success" size="lg" className="w-100 py-3 mb-3 basic-shadow" as={Link} to={`/match/new`}>
+              <Button variant="success" size="lg" className="w-75 py-3 mb-3 basic-shadow" as={Link} to={`/match/new`}>
                 Gioca una partita
               </Button>
             </Col>

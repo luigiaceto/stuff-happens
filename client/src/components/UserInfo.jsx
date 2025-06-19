@@ -77,8 +77,8 @@ function Match({match}) {
       <Accordion.Header>
         <Col>
           {/* uso span per non andare a capo, come invece fa div (span è per elementi in-line) */}
-          <span className="me-4">{match.date}</span>
-          <span>Carte collezionate: {match.card_collected}</span>
+          <span className="me-4">🗓️ {match.date}</span>
+          <span>🃏 Carte collezionate: {match.card_collected}</span>
         </Col>
         <Col className="text-end me-4">
           <Badge bg={match.match_result === 'Vittoria' ? 'success' : 'danger'}>

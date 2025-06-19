@@ -131,8 +131,8 @@ app.post('/api/matches/new',
   async (req, res) => {
     // se l'utente è loggato passport avrà iniettato l'user nella
     // richiesta tramite middlewere. Evito così di far mandare 
-    // all'utente "demo: Yes/No" così non devo fare controlli
-    // per vedere se manda No nonostante non sia loggato
+    // all'utente il campo nel body "demo: Yes/No" così non devo fare 
+    // controlli per vedere se manda 'No' nonostante non sia loggato
     const user_id = req.user ? req.user.id : null;
     try {
       const match_id = await MatchDAO.addMatch(user_id);

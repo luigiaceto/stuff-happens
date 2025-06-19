@@ -48,16 +48,16 @@ function MatchStart({loggedIn}) {
           {message.msg}
         </Alert>}
       <Container className='glass-card'>
-        <h1 className='mt-3 text-center'>Regolamento</h1>  
+        <h2 className='mt-3 text-center'>📖Regolamento</h2>  
         <ul>
           <li>Inizierai con 3 carte in mano di cui conoscerai l'indice di sfortuna</li>
-          <li>Ogni round ti verrà proposta una nuova carta sul tavolo nascondendo l'indice di sfortuna</li>
-          <li>Avrai 30 secondi per indovinarne la posizione, tra le carte della tua mano</li>
+          <li>Ogni round ti verrà proposta una nuova carta sul tavolo (nascondendo il suo indice di sfortuna)</li>
+          <li>Avrai 30 secondi per posizionare la carta nella tua mano in ordine di indice di sfortuna</li>
           <li>Se non selezioni nulla perdi il round automaticamente, altrimenti se indovini guadagni la carta</li>
-          <li>Lo scopo del gioco è di arrivare a 6 carte in mano</li>
+          <li>Lo scopo del gioco è arrivare ad avere 6 carte in mano</li>
           <li>Alla 3a carta non indovinata perdi la partita</li>
-          {!loggedIn && <li>Ricordati di *eseguire il login* per avere accesso completo all'app, altrimenti potrai solo provare il gioco 
-            tramite partite demo di un solo round :)</li>}
+          {!loggedIn && <li>Ricordati di <strong>eseguire il login</strong> per avere accesso completo all'app, altrimenti potrai solo provare il gioco 
+            tramite partite demo di un unico round 😖</li>}
         </ul>
       </Container>
       <h3 className='text-center mt-5'>Buon divertimento e buona (s)fortuna !</h3>
@@ -69,7 +69,7 @@ function MatchStart({loggedIn}) {
             duration={1}
             ease="power3.out"
           >
-            <Button variant="success" size="lg" className="w-25 py-3 mb-3 mt-4 mx-auto basic-shadow" onClick={handleBegin}>
+            <Button variant="success" size="lg" className="py-3 mb-3 mt-4 mx-auto basic-shadow" style={{ width: "200px" }} onClick={handleBegin}>
               Inizia
             </Button>
           </AnimatedContent>}

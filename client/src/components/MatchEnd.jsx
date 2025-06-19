@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router';
 import { Hand } from './Cards';
 import { Container, Alert, Button, Spinner } from 'react-bootstrap';
 import API from '../API.mjs';
+import SplitText from './reactbits_components/SplitText.jsx';
 
 function MatchEnd({ loggedIn }) {
   const location = useLocation();
@@ -19,7 +20,7 @@ function MatchEnd({ loggedIn }) {
   }, []);
 
   // la callback è praticamente identica a quella di MatchStart, purtroppo
-  // non è possibile passarla da matchStart a matchEnd poichè si trovano
+  // non è possibile passarla da MatchStart a MatchEnd poichè si trovano
   // in due route separate.
   const handleBegin = async () => {
     setLoading(true);
@@ -46,17 +47,28 @@ function MatchEnd({ loggedIn }) {
       {/* all'inizio del rendering matchInfo è null quindi darebbe errore */}
       {matchInfo &&
       <>
-      <Alert className="w-50 text-center mx-auto" variant={matchInfo.match_result.type}>{matchInfo.match_result.msg}</Alert>  
-      <h3 className='text-center mb-4'>
-        Carte raccolte durante la partita:
-      </h3>
-      <Hand situations={matchInfo.collected_situations} />
-      {!loading && 
-        <Button variant="success" size="lg" className="w-25 py-3 mb-3 mt-5" onClick={handleBegin}>
-          Gioca una nuova partita
-        </Button>}
-      {loading && 
-        <Spinner animation="border" variant="success"/>}
+        <SplitText
+          text={`${matchInfo.match_result.msg}`}
+          className="text-2xl font-semibold text-center fs-1"
+          delay={80}
+          duration={1}
+          ease="power3.out"
+          splitType="words"
+          from={{ opacity: 0, y: 40 }}
+          to={{ opacity: 1, y: 0 }}
+          textAlign="center"
+          color = {matchInfo.match_result.type === 'success' ? '#4bb52d' : '#ed4f2f'}
+        />
+        <h4 className='text-center mb-4 mt-3'>
+          Carte raccolte durante la partita:
+        </h4>
+        <Hand situations={matchInfo.collected_situations} />
+        {!loading && 
+          <Button variant="success" size="lg" className="py-3 mb-3 mt-5" style={{ width: "300px" }} onClick={handleBegin}>
+            Inizia una nuova partita
+          </Button>}
+        {loading && 
+          <Spinner animation="border" variant="success"/>}
       </>}
     </Container>
   )

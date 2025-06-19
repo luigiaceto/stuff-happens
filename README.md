@@ -172,7 +172,6 @@ Response body:
 }
 ```
 
-
 ### __Check sessione attiva__
 URL: `/api/sessions/current`
 
@@ -213,37 +212,37 @@ Response body: Nessuno
 | `situation` |
 |-------------|
 | **id** (int) |
-| name (string) |
+| name (text) |
 | misfortune_index (real) |
-| img_path (string) |
+| img_path (text) |
 
 | `match` |
 |---------|
 | **id** (int) |
 | user_id (int) |
-| result (string) |
+| result (text) |
 | round (int) |
-| date (string) |
-| terminated (string) |
+| date (text) |
+| terminated (text) |
 
 | `situation_in_match` |
 |----------------------|
 | **situation_id** (int) |
 | **match_id** (int) |
 | round (int) |
-| result (string) |
-| timestamp (string) |
+| result (text) |
+| timestamp (text) |
 
 | `user` |
 |--------|
 | **id** (int) |
-| name (string) |
-| email (string) |
-| password (string) |
-| salt (string) |
-| profile_pic (string) |
+| name (text) |
+| email (text) |
+| password (text) |
+| salt (text) |
+| profile_pic (text) |
 
-Nota: la tabella situation_in_match rappresenta la relazione che lega ogni match alle carte presenti in esso.
+Nota: la tabella `situation_in_match` rappresenta la relazione che lega ogni match alle carte presenti in esso.
 
 ## Main React Components
 
@@ -252,7 +251,7 @@ Nota: la tabella situation_in_match rappresenta la relazione che lega ogni match
 - `GuessHand` in *Cards.jsx* -> renderizza un gruppo di carte (situazioni) insieme a dei placeholder per selezionare la posizione in cui inserire la nuova carta, inoltre renderizza un bottone usato per confermare la scelta
 - `CountDownTimer` in *MatchGameplay.jsx* -> renderizza un timer di 30s che forza il giocatore a fare una scelta in questo lasso di tempo. Se il giocatore non conferma la scelta entro 30s il round è automaticamente perso
 - `DefaultLayout` in *DefaultLayout.jsx* -> renderizza il default layout dell'app che comprende la navbar, messaggio di benvenuto e il footer
-- `HomeMenu` in *Home.jsx* -> renderizza la pagina home dell'app, contiene il tasto per spostarsi nella pagina di rulings, per iniziare a giocare, e qualche scritta 
+- `HomeMenu` in *Home.jsx* -> renderizza la pagina home dell'app, contiene il tasto per spostarsi nella pagina di rulings (dove poi si può iniziare a giocare), e qualche scritta 
 - `MatchRulings` in *MatchRulings.jsx* -> renderizza la pagina per iniziare effettivamente una partita. Comprende il regolamento e il tasto per iniziare un match (demo o non)
 - `MatchGameplay` in *MatchGameplay.jsx* -> renderizza la partita vera e propria che comprende timer, mano e carta sul tavolo nonchè messaggi che avvisano sul risultato della guess
 - `MatchEnd` in *MatchEnd.jsx* -> renderizza la pagina di fine match con carte collezionate e messaggio di vittoria/sconfitta, nonchè tasto per giocare una nuova partita
